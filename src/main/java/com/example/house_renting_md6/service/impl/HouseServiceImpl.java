@@ -34,72 +34,63 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     public void save(House house) {
-
+        houseRepository.save(house);
     }
 
     @Override
     public void remove(Long id) {
-
+        houseRepository.deleteById(id);
     }
-//
+
+    @Override
+    public Page<House> findAllByCategory_Id(Long id, Pageable pageable) {
+        return houseRepository.findAllByCategory_Id(id, pageable);
+    }
+
+    @Override
+    public Page<House> findAllByBedroom(int bedroom, Pageable pageable) {
+        return houseRepository.findByBedRoom(bedroom, pageable);
+    }
+
+    @Override
+    public Page<House> findAllByBathroom(int bathroom, Pageable pageable) {
+        return houseRepository.findByBathroom(bathroom, pageable);
+    }
+
+    @Override
+    public Page<House> findByCategory(int category, Pageable pageable) {
+        return houseRepository.findByCategory(category, pageable);
+    }
+
+    @Override
+    public Iterable<House> findTop2() {
+        return houseRepository.findTop2();
+    }
+
+    @Override
+    public Page<House> findAllByBathroomAndBedroom(int bathroom, int bedroom, Pageable pageable) {
+        return houseRepository.findAllByBathroomAndBedroom(bathroom, bedroom, pageable);
+    }
+
 //    @Override
-//    public Iterable<House> findAll() {
-//        return null;
+//    public Page<House> findAllByStatus(int status ,Pageable pageable) {
+//        return houseRepository.findByStatus(status,pageable);
 //    }
-//
-//    @Override
-//    public void save(House house) {
-//
-//    }
-//
-//    @Override
-//    public void remove(Long id) {
-//
-//    }
-//
-//
-//    @Override
-//    public Page<House> findAllByCategory_Id(Long id, Pageable pageable) {
-//        return null;
-//    }
-//
-//    @Override
-//    public Iterable<House> findByOwnerId(Long owner_id) {
-//        return null;
-//    }
-//
-//    @Override
-//    public House findLastHouse() {
-//        return null;
-//    }
-//
-//    @Override
-//    public Page<House> findAllByBedroom(int bedroom, Pageable pageable) {
-//        return null;
-//    }
-//
-//    @Override
-//    public Page<House> findAllByBathroom(int bathroom, Pageable pageable) {
-//        return null;
-//    }
-//
-//    @Override
-//    public Page<House> findByCategory(int category, Pageable pageable) {
-//        return null;
-//    }
-//
-//    @Override
-//    public Iterable<House> findTop2() {
-//        return null;
-//    }
-//
-//    @Override
-//    public Page<House> findAllByBathroomAndBedroom(int bathroom, int bedroom, Pageable pageable) {
-//        return null;
-//    }
-//
-//    @Override
-//    public Iterable<House> findByAll(String address, int start, int end, int bathroom, int bedroom, LocalDate cus_begin, LocalDate cus_end) {
-//        return null;
-//    }
+
+    @Override
+    public Iterable<House> findByOwnerId(Long owner_id) {
+        return houseRepository.findByOwnerId(owner_id);
+    }
+
+    @Override
+    public House findLastHouse() {
+        return houseRepository.findLastHouse();
+    }
+
+    @Override
+    public Iterable<House> findByAll(String address, int start, int end, int bathroom, int bedroom, LocalDate cus_begin, LocalDate cus_end) {
+        return null;
+//        return houseRepository.findByAllThing(address, start, end, bathroom, bedroom, cus_begin, cus_end);
+    }
+
 }
