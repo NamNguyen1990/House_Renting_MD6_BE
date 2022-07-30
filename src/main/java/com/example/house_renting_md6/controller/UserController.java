@@ -125,8 +125,8 @@ public class UserController {
         user.setPassword(userOptional.get().getPassword());
         user.setRoles(userOptional.get().getRoles());
         user.setConfirmPassword(userOptional.get().getConfirmPassword());
-
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
 }
