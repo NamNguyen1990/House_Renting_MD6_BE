@@ -132,7 +132,6 @@ public class UserController {
         user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
         userService.save(user);
 
-
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
     @PutMapping("/users/edit/{id}")

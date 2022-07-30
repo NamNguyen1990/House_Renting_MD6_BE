@@ -4,6 +4,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Column;
+import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -14,8 +16,12 @@ public class UserPrinciple implements UserDetails {
 
     private Long id;
 
+    @NotBlank(message = "Tên đăng nhập không được trống")
+    @Column(unique = true, nullable = false)
     private String username;
 
+    @NotBlank(message = "Mật khẩu không được trống, hoặc không đúng mật khẩu")
+    @Column(nullable = false)
     private String password;
 
     private Collection<? extends GrantedAuthority> roles;
