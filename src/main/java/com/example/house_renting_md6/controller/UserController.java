@@ -120,12 +120,26 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         user.setId(userOptional.get().getId());
-        user.setUsername(userOptional.get().getUsername());
         user.setEnabled(userOptional.get().isEnabled());
-        user.setPassword(userOptional.get().getPassword());
         user.setRoles(userOptional.get().getRoles());
-        user.setConfirmPassword(userOptional.get().getConfirmPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
+        userService.save(user);
 
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+    @PutMapping("/users/edit/{id}")
+    public ResponseEntity<User> updateUserPassword(@PathVariable Long id, @RequestBody User user,@RequestParam String oldpassword, @RequestParam String newpassword) {
+        Optional<User> userOptional = this.userService.findById(id);
+        if (!userOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if (userOptional.get().getPassword().equals(oldpassword)) {
+            user.setId(userOptional.get().getId());
+            user.setPassword(passwordEncoder.encode(newpassword));
+            user.setConfirmPassword(passwordEncoder.encode(newpassword));
+        }
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
