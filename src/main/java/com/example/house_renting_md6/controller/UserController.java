@@ -53,6 +53,7 @@ public class UserController {
         Iterable<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
     @GetMapping("/admin/users")
     public ResponseEntity<Iterable<User>> showAllUserByAdmin() {
         Iterable<User> users = userService.findAll();
@@ -89,11 +90,11 @@ public class UserController {
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = jwtService.generateTokenLogin(authentication);
@@ -103,7 +104,7 @@ public class UserController {
     }
 
     @GetMapping("/hello")
-    public ResponseEntity<String> hello(){
+    public ResponseEntity<String> hello() {
         return new ResponseEntity("Hello World", HttpStatus.OK);
     }
 
@@ -129,18 +130,21 @@ public class UserController {
 
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-    @PutMapping("/users/edit/{id}")
-    public ResponseEntity<User> updateUserPassword(@PathVariable Long id, @RequestBody User user,@RequestParam String oldpassword, @RequestParam String newpassword) {
+
+    @PutMapping("/users/edit-password/{id}")
+    public ResponseEntity<User> updateUserPassword(@PathVariable Long id, @RequestParam String oldPassword, @RequestParam String newPassword) {
         Optional<User> userOptional = this.userService.findById(id);
-        if (!userOptional.isPresent()) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(userOptional.get().getUsername(), oldPassword));
+        String jwt = jwtService.generateTokenLogin(authentication);
+        if (jwt == null) {
+            System.out.println("Mật khẩu cũ không đúng");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            userOptional.get().setId(id);
+            userOptional.get().setPassword(passwordEncoder.encode(newPassword));
         }
-        if (userOptional.get().getPassword().equals(oldpassword)) {
-            user.setId(userOptional.get().getId());
-            user.setPassword(passwordEncoder.encode(newpassword));
-            user.setConfirmPassword(passwordEncoder.encode(newpassword));
-        }
-        userService.save(user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        userService.save(userOptional.get());
+        return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
     }
 }
