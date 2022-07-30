@@ -1,5 +1,6 @@
 package com.example.house_renting_md6.controller;
 
+import com.example.house_renting_md6.model.ApiError;
 import com.example.house_renting_md6.model.JwtResponse;
 import com.example.house_renting_md6.model.Role;
 import com.example.house_renting_md6.model.User;
@@ -9,6 +10,7 @@ import com.example.house_renting_md6.service.impl.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,12 +20,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import java.util.*;
 
+@Validated
 @RestController
 @PropertySource("classpath:application.properties")
 @CrossOrigin("*")
@@ -60,7 +66,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@RequestBody User user, BindingResult bindingResult) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -144,4 +150,21 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @ExceptionHandler({ ConstraintViolationException.class })
+    public ResponseEntity<Object> handleConstraintViolation(
+            ConstraintViolationException ex, WebRequest request) {
+//        List<String> errors = new ArrayList<String>();
+        Map<String, String> errors = new HashMap<>();
+        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+//            errors.add(violation.getRootBeanClass().getName() + " " +
+//                    violation.getPropertyPath() + ": " + violation.getMessage());
+            String path = String.valueOf(violation.getPropertyPath());
+            errors.put(path.replace("createUser.user.", ""), violation.getMessage());
+        }
+
+        ApiError apiError =
+                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
+        return new ResponseEntity<Object>(
+                apiError, new HttpHeaders(), apiError.getStatus());
+    }
 }
