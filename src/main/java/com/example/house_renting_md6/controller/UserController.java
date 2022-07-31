@@ -149,7 +149,19 @@ public class UserController {
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-
+    @PutMapping("/users/change-password/{id}")
+    public ResponseEntity<?> updatePassword(@RequestParam String oldPassword,@RequestParam String newPassword, @PathVariable Long id){
+        Optional<User> userOptional = userService.findById(id);
+        boolean matches= passwordEncoder.matches(oldPassword,userOptional.get().getPassword());
+        boolean matches1= passwordEncoder.matches(newPassword,userOptional.get().getPassword());
+        if (matches){
+            if (!matches1){
+                userOptional.get().setPassword(passwordEncoder.encode(newPassword));
+                userService.save(userOptional.get());
+                return new ResponseEntity<>(HttpStatus.OK);
+            }else return new ResponseEntity<>( HttpStatus.CONFLICT);
+        }else return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
 
 
     @ExceptionHandler({ ConstraintViolationException.class })
