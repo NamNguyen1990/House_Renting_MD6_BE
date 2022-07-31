@@ -134,6 +134,7 @@ public class UserController {
 
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
     @PutMapping("/users/edit/{id}")
     public ResponseEntity<User> updateUserPassword(@PathVariable Long id, @RequestBody User user,@RequestParam String oldpassword, @RequestParam String newpassword) {
         Optional<User> userOptional = this.userService.findById(id);
@@ -148,6 +149,8 @@ public class UserController {
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
+
 
     @ExceptionHandler({ ConstraintViolationException.class })
     public ResponseEntity<Object> handleConstraintViolation(
