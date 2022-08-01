@@ -59,6 +59,7 @@ public class UserController {
         Iterable<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
     @GetMapping("/admin/users")
     public ResponseEntity<Iterable<User>> showAllUserByAdmin() {
         Iterable<User> users = userService.findAll();
@@ -95,6 +96,7 @@ public class UserController {
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         Authentication authentication = authenticationManager.authenticate(
@@ -109,7 +111,7 @@ public class UserController {
     }
 
     @GetMapping("/hello")
-    public ResponseEntity<String> hello(){
+    public ResponseEntity<String> hello() {
         return new ResponseEntity("Hello World", HttpStatus.OK);
     }
 
@@ -136,7 +138,7 @@ public class UserController {
     }
 
     @PutMapping("/users/edit/{id}")
-    public ResponseEntity<User> updateUserPassword(@PathVariable Long id, @RequestBody User user,@RequestParam String oldpassword, @RequestParam String newpassword) {
+    public ResponseEntity<User> updateUserPassword(@PathVariable Long id, @RequestBody User user, @RequestParam String oldpassword, @RequestParam String newpassword) {
         Optional<User> userOptional = this.userService.findById(id);
         if (!userOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -149,22 +151,23 @@ public class UserController {
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
     @PutMapping("/users/change-password/{id}")
-    public ResponseEntity<?> updatePassword(@RequestParam String oldPassword,@RequestParam String newPassword, @PathVariable Long id){
+    public ResponseEntity<?> updatePassword(@RequestParam String oldPassword, @RequestParam String newPassword, @PathVariable Long id) {
         Optional<User> userOptional = userService.findById(id);
-        boolean matches= passwordEncoder.matches(oldPassword,userOptional.get().getPassword());
-        boolean matches1= passwordEncoder.matches(newPassword,userOptional.get().getPassword());
-        if (matches){
-            if (!matches1){
+        boolean matches = passwordEncoder.matches(oldPassword, userOptional.get().getPassword());
+        boolean matches1 = passwordEncoder.matches(newPassword, userOptional.get().getPassword());
+        if (matches) {
+            if (!matches1) {
                 userOptional.get().setPassword(passwordEncoder.encode(newPassword));
                 userService.save(userOptional.get());
                 return new ResponseEntity<>(HttpStatus.OK);
-            }else return new ResponseEntity<>( HttpStatus.CONFLICT);
-        }else return new ResponseEntity<>(HttpStatus.CONFLICT);
+            } else return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } else return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
 
-    @ExceptionHandler({ ConstraintViolationException.class })
+    @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<Object> handleConstraintViolation(
             ConstraintViolationException ex, WebRequest request) {
 //        List<String> errors = new ArrayList<String>();

@@ -1,4 +1,7 @@
 package com.example.house_renting_md6.model;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -12,7 +15,9 @@ public class Order {
     private House house;
     @ManyToOne
     private User customer;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate startTime;
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate endTime;
     private int total;
 

@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
         boolean isCorrectUser = false;
         for (User currentUser : users) {
             if (currentUser.getUsername().equals(user.getUsername())
-                    && user.getPassword().equals(currentUser.getPassword())&&
+                    && user.getPassword().equals(currentUser.getPassword()) &&
                     currentUser.isEnabled()) {
                 isCorrectUser = true;
             }
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isCorrectConfirmPassword(User user) {
         boolean isCorrentConfirmPassword = false;
-        if(user.getPassword().equals(user.getConfirmPassword())){
+        if (user.getPassword().equals(user.getConfirmPassword())) {
             isCorrentConfirmPassword = true;
         }
         return isCorrentConfirmPassword;

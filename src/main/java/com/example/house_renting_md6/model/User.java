@@ -27,7 +27,7 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String confirmPassword;
 
-// số điện thoại là các đầu: 84, 03, 05, 07, 08, 09, và phía sau gồm các số sao cho số không được vượt quá 8 số: 0388888888
+    // số điện thoại là các đầu: 84, 03, 05, 07, 08, 09, và phía sau gồm các số sao cho số không được vượt quá 8 số: 0388888888
     @NotBlank(message = "Số điện thoại không được trống")
     @Pattern(regexp = "(84|0[3|5|7|8|9])+([0-9]{8})\\b", message = "Số điện thoại không đúng định dạng")
     @Column(nullable = false)
