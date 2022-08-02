@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -54,7 +55,6 @@ public class HouseController {
         return new ResponseEntity<>(house, HttpStatus.OK);
     }
 
-//trong backlog không có xóa
     @DeleteMapping("/{id}")
     public ResponseEntity<House> deleteHouse(@PathVariable Long id) {
         Optional<House> houseOptional = houseService.findById(id);
@@ -65,6 +65,13 @@ public class HouseController {
         houseService.save(houseOptional.get());
         return new ResponseEntity<>(houseOptional.get(), HttpStatus.NO_CONTENT);
     }
-
+    @GetMapping("/find-by-ownerId")  // Tìm theo id User đăng nhập để ra số house đã đăng của id đó!
+    public ResponseEntity<Iterable<House>> findHouseByOwnerId(@RequestParam Long owner_id) {
+        List<House> houses = (List<House>) houseService.findByOwnerId(owner_id);
+        if (houses.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(houses, HttpStatus.OK);
+    }
 
 }
