@@ -30,7 +30,7 @@ public class OrderController {
     @Autowired
     OrderServiceImpl orderService;
 
-    @GetMapping("/{idHome}/{idCustomer}")
+    @PostMapping("/{idHome}/{idCustomer}")
     public ResponseEntity<?> orderHome(@RequestBody Order order, @PathVariable Long idHome, @PathVariable Long idCustomer) {
         Optional<House> house = houseService.findById(idHome);
         Optional<User> user = userService.findById(idCustomer);
