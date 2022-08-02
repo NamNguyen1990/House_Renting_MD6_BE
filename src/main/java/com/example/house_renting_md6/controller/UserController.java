@@ -1,9 +1,6 @@
 package com.example.house_renting_md6.controller;
 
-import com.example.house_renting_md6.model.ApiError;
-import com.example.house_renting_md6.model.JwtResponse;
-import com.example.house_renting_md6.model.Role;
-import com.example.house_renting_md6.model.User;
+import com.example.house_renting_md6.model.*;
 import com.example.house_renting_md6.service.RoleService;
 import com.example.house_renting_md6.service.UserService;
 import com.example.house_renting_md6.service.impl.JwtService;
@@ -67,15 +64,24 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Iterable<User> users = userService.findAll();
         for (User currentUser : users) {
             if (currentUser.getUsername().equals(user.getUsername())) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new ResponseMessage("Tên đăng nhập đã được sử dụng, hãy thử lại!"),HttpStatus.BAD_REQUEST);
             }
+        }
+        for (User currentUser : users) {
+            if (currentUser.getPhone().equals(user.getPhone())) {
+                return new ResponseEntity<>(new ResponseMessage("Số điện thoại đã được đăng kí, Hãy thử lại!"),HttpStatus.BAD_REQUEST);
+            }
+        }
+        if (user.getPassword().equals(user.getConfirmPassword())){
+            return new ResponseEntity<>(new ResponseMessage("Nhập lại mật khẩu không đúng!"),HttpStatus.BAD_REQUEST);
+
         }
         if (!userService.isCorrectConfirmPassword(user)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
