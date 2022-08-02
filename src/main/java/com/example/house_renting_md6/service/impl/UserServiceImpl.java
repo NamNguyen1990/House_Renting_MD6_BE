@@ -57,10 +57,10 @@ public class UserServiceImpl implements UserService {
             throw new CustomException("Nhập lại mật khẩu không đúng!");
         }
         if (existsByUsername(user.getUsername())) {
-            throw new CustomException("Tên đăng nhập đã được sử dụng, hãy thử lại!");
+            throw new CustomException("Tên đăng nhập đã được sử dụng!");
         }
         if (existsByPhone(user.getPhone())) {
-            throw new CustomException("Số điện thoại đã được đăng kí, Hãy thử lại!");
+            throw new CustomException("Số điện thoại đã được đăng ký!");
         }
         Role role;
         Set<Role> roles = new HashSet<>();

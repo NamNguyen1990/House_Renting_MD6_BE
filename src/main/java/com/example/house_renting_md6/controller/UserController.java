@@ -2,6 +2,7 @@ package com.example.house_renting_md6.controller;
 
 import com.example.house_renting_md6.CustomException;
 import com.example.house_renting_md6.model.*;
+import com.example.house_renting_md6.model.ResponseBody;
 import com.example.house_renting_md6.service.RoleService;
 import com.example.house_renting_md6.service.UserService;
 import com.example.house_renting_md6.service.impl.JwtService;
@@ -65,21 +66,20 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
+    public ResponseEntity<ResponseBody> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseBody("0001", "Tham số đầu vào không hợp lệ"), HttpStatus.OK);
         }
         try {
-            return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
+            return new ResponseEntity<>(new ResponseBody("0000", "Sign Up Success", userService.save(user)), HttpStatus.CREATED);
         } catch (CustomException e) {
-            return new ResponseEntity<>(new ResponseMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseBody("9999", e.getMessage()), HttpStatus.OK);
         }
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -159,8 +159,7 @@ public class UserController {
 
 
     @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<Object> handleConstraintViolation(
-            ConstraintViolationException ex, WebRequest request) {
+    public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
 //        List<String> errors = new ArrayList<String>();
         Map<String, String> errors = new HashMap<>();
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
@@ -170,9 +169,7 @@ public class UserController {
             errors.put(path.replace("createUser.user.", ""), violation.getMessage());
         }
 
-        ApiError apiError =
-                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
-        return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 }
