@@ -1,5 +1,6 @@
 package com.example.house_renting_md6.controller;
 
+import com.example.house_renting_md6.CustomException;
 import com.example.house_renting_md6.model.*;
 import com.example.house_renting_md6.service.RoleService;
 import com.example.house_renting_md6.service.UserService;
@@ -68,39 +69,11 @@ public class UserController {
         if (bindingResult.hasFieldErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Iterable<User> users = userService.findAll();
-        for (User currentUser : users) {
-            if (currentUser.getUsername().equals(user.getUsername())) {
-                return new ResponseEntity<>(new ResponseMessage("Tên đăng nhập đã được sử dụng, hãy thử lại!"),HttpStatus.BAD_REQUEST);
-            }
+        try {
+            return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
+        } catch (CustomException e) {
+            return new ResponseEntity<>(new ResponseMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
-        for (User currentUser : users) {
-            if (currentUser.getPhone().equals(user.getPhone())) {
-                return new ResponseEntity<>(new ResponseMessage("Số điện thoại đã được đăng kí, Hãy thử lại!"),HttpStatus.BAD_REQUEST);
-            }
-        }
-        if (user.getPassword().equals(user.getConfirmPassword())){
-            return new ResponseEntity<>(new ResponseMessage("Nhập lại mật khẩu không đúng!"),HttpStatus.BAD_REQUEST);
-
-        }
-        if (!userService.isCorrectConfirmPassword(user)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        if (user.getRoles() != null) {
-            Role role = roleService.findByName("ROLE_ADMIN");
-            Set<Role> roles = new HashSet<>();
-            roles.add(role);
-            user.setRoles(roles);
-        } else {
-            Role role1 = roleService.findByName("ROLE_USER");
-            Set<Role> roles1 = new HashSet<>();
-            roles1.add(role1);
-            user.setRoles(roles1);
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
-        userService.save(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
@@ -138,7 +111,11 @@ public class UserController {
         user.setRoles(userOptional.get().getRoles());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
-        userService.save(user);
+        try {
+            userService.save(user);
+        } catch (CustomException e) {
+            throw new RuntimeException(e);
+        }
 
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
@@ -154,7 +131,11 @@ public class UserController {
             user.setPassword(passwordEncoder.encode(newpassword));
             user.setConfirmPassword(passwordEncoder.encode(newpassword));
         }
-        userService.save(user);
+        try {
+            userService.save(user);
+        } catch (CustomException e) {
+            throw new RuntimeException(e);
+        }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -166,7 +147,11 @@ public class UserController {
         if (matches) {
             if (!matches1) {
                 userOptional.get().setPassword(passwordEncoder.encode(newPassword));
-                userService.save(userOptional.get());
+                try {
+                    userService.save(userOptional.get());
+                } catch (CustomException e) {
+                    throw new RuntimeException(e);
+                }
                 return new ResponseEntity<>(HttpStatus.OK);
             } else return new ResponseEntity<>(HttpStatus.CONFLICT);
         } else return new ResponseEntity<>(HttpStatus.CONFLICT);
