@@ -6,6 +6,7 @@ import com.example.house_renting_md6.model.ResponseBody;
 import com.example.house_renting_md6.service.RoleService;
 import com.example.house_renting_md6.service.UserService;
 import com.example.house_renting_md6.service.impl.JwtService;
+import com.example.house_renting_md6.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -45,7 +46,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
+    @Autowired
+    UserServiceImpl userServiceImpl;
     @Autowired
     private RoleService roleService;
 
@@ -100,42 +102,20 @@ public class UserController {
         return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/users/update-profile/{id}")
     public ResponseEntity<User> updateUserProfile(@PathVariable Long id, @RequestBody User user) {
         Optional<User> userOptional = this.userService.findById(id);
         if (!userOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         user.setId(userOptional.get().getId());
+        user.setUsername(userOptional.get().getUsername());
         user.setEnabled(userOptional.get().isEnabled());
         user.setRoles(userOptional.get().getRoles());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
-        try {
-            userService.save(user);
-        } catch (CustomException e) {
-            throw new RuntimeException(e);
-        }
 
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-    @PutMapping("/users/edit/{id}")
-    public ResponseEntity<User> updateUserPassword(@PathVariable Long id, @RequestBody User user, @RequestParam String oldpassword, @RequestParam String newpassword) {
-        Optional<User> userOptional = this.userService.findById(id);
-        if (!userOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        if (userOptional.get().getPassword().equals(oldpassword)) {
-            user.setId(userOptional.get().getId());
-            user.setPassword(passwordEncoder.encode(newpassword));
-            user.setConfirmPassword(passwordEncoder.encode(newpassword));
-        }
-        try {
-            userService.save(user);
-        } catch (CustomException e) {
-            throw new RuntimeException(e);
-        }
+        userServiceImpl.update(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
