@@ -156,4 +156,8 @@ public class UserServiceImpl implements UserService {
     public boolean existsByPhone(String phone) {
         return userRepository.existsByPhone(phone);
     }
+
+    public User update(User user) {
+        return userRepository.save(user);
+    }
 }
