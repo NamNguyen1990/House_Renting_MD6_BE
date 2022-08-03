@@ -1,9 +1,8 @@
 package com.example.house_renting_md6.controller;
 
-import com.example.house_renting_md6.model.ApiError;
-import com.example.house_renting_md6.model.JwtResponse;
-import com.example.house_renting_md6.model.Role;
-import com.example.house_renting_md6.model.User;
+import com.example.house_renting_md6.CustomException;
+import com.example.house_renting_md6.model.*;
+import com.example.house_renting_md6.model.ResponseBody;
 import com.example.house_renting_md6.service.RoleService;
 import com.example.house_renting_md6.service.UserService;
 import com.example.house_renting_md6.service.impl.JwtService;
@@ -59,6 +58,7 @@ public class UserController {
         Iterable<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
     @GetMapping("/admin/users")
     public ResponseEntity<Iterable<User>> showAllUserByAdmin() {
         Iterable<User> users = userService.findAll();
@@ -66,39 +66,20 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
+    public ResponseEntity<ResponseBody> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseBody("0001", "Tham số đầu vào không hợp lệ"), HttpStatus.OK);
         }
-        Iterable<User> users = userService.findAll();
-        for (User currentUser : users) {
-            if (currentUser.getUsername().equals(user.getUsername())) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
+        try {
+            return new ResponseEntity<>(new ResponseBody("0000", "Sign Up Success", userService.save(user)), HttpStatus.CREATED);
+        } catch (CustomException e) {
+            return new ResponseEntity<>(new ResponseBody("9999", e.getMessage()), HttpStatus.OK);
         }
-        if (!userService.isCorrectConfirmPassword(user)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        if (user.getRoles() != null) {
-            Role role = roleService.findByName("ROLE_ADMIN");
-            Set<Role> roles = new HashSet<>();
-            roles.add(role);
-            user.setRoles(roles);
-        } else {
-            Role role1 = roleService.findByName("ROLE_USER");
-            Set<Role> roles1 = new HashSet<>();
-            roles1.add(role1);
-            user.setRoles(roles1);
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
-        userService.save(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -109,8 +90,8 @@ public class UserController {
     }
 
     @GetMapping("/hello")
-    public ResponseEntity<String> hello(){
-        return new ResponseEntity("Hello World", HttpStatus.OK);
+    public ResponseEntity<String> hello() {
+        return new ResponseEntity<>("Hello World", HttpStatus.OK);
     }
 
     @GetMapping("/users/{id}")
@@ -130,13 +111,17 @@ public class UserController {
         user.setRoles(userOptional.get().getRoles());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
-        userService.save(user);
+        try {
+            userService.save(user);
+        } catch (CustomException e) {
+            throw new RuntimeException(e);
+        }
 
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PutMapping("/users/edit/{id}")
-    public ResponseEntity<User> updateUserPassword(@PathVariable Long id, @RequestBody User user,@RequestParam String oldpassword, @RequestParam String newpassword) {
+    public ResponseEntity<User> updateUserPassword(@PathVariable Long id, @RequestBody User user, @RequestParam String oldpassword, @RequestParam String newpassword) {
         Optional<User> userOptional = this.userService.findById(id);
         if (!userOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -146,27 +131,35 @@ public class UserController {
             user.setPassword(passwordEncoder.encode(newpassword));
             user.setConfirmPassword(passwordEncoder.encode(newpassword));
         }
-        userService.save(user);
+        try {
+            userService.save(user);
+        } catch (CustomException e) {
+            throw new RuntimeException(e);
+        }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
     @PutMapping("/users/change-password/{id}")
-    public ResponseEntity<?> updatePassword(@RequestParam String oldPassword,@RequestParam String newPassword, @PathVariable Long id){
+    public ResponseEntity<?> updatePassword(@RequestParam String oldPassword, @RequestParam String newPassword, @PathVariable Long id) {
         Optional<User> userOptional = userService.findById(id);
-        boolean matches= passwordEncoder.matches(oldPassword,userOptional.get().getPassword());
-        boolean matches1= passwordEncoder.matches(newPassword,userOptional.get().getPassword());
-        if (matches){
-            if (!matches1){
+        boolean matches = passwordEncoder.matches(oldPassword, userOptional.get().getPassword());
+        boolean matches1 = passwordEncoder.matches(newPassword, userOptional.get().getPassword());
+        if (matches) {
+            if (!matches1) {
                 userOptional.get().setPassword(passwordEncoder.encode(newPassword));
-                userService.save(userOptional.get());
+                try {
+                    userService.save(userOptional.get());
+                } catch (CustomException e) {
+                    throw new RuntimeException(e);
+                }
                 return new ResponseEntity<>(HttpStatus.OK);
-            }else return new ResponseEntity<>( HttpStatus.CONFLICT);
-        }else return new ResponseEntity<>(HttpStatus.CONFLICT);
+            } else return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } else return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
 
-    @ExceptionHandler({ ConstraintViolationException.class })
-    public ResponseEntity<Object> handleConstraintViolation(
-            ConstraintViolationException ex, WebRequest request) {
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
 //        List<String> errors = new ArrayList<String>();
         Map<String, String> errors = new HashMap<>();
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
@@ -176,9 +169,7 @@ public class UserController {
             errors.put(path.replace("createUser.user.", ""), violation.getMessage());
         }
 
-        ApiError apiError =
-                new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
-        return new ResponseEntity<Object>(
-                apiError, new HttpHeaders(), apiError.getStatus());
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 }

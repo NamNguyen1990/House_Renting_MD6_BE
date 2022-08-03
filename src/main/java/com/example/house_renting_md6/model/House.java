@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 public class House {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Long id;
+    private Long id;
     @NotBlank(message = "Không được để trống tên")
     private String name;
     @ManyToOne
