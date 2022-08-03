@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/home")
+@RequestMapping("/homes")
 public class HomeController {
     @Autowired
     HouseServiceImpl houseService;
