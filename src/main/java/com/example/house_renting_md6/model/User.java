@@ -33,6 +33,13 @@ public class User implements Serializable {
     @Column(nullable = false, unique = true)
     private String phone;
 
+    private String email ;
+
+    private String address ;
+
+    private String fullName ;
+
+    private String avatar ;
 
     private boolean enabled = true;
 
@@ -49,11 +56,57 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
+    public User(Long id, String username, String password, String confirmPassword, String phone, String email, String address, String fullName, String avatar, boolean enabled, Set<Role> roles) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.fullName = fullName;
+        this.avatar = avatar;
+        this.enabled = enabled;
+        this.roles = roles;
+    }
+
     public User() {
     }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public Long getId() {
