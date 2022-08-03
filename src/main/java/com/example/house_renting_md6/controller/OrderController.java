@@ -78,6 +78,9 @@ public class OrderController {
         LocalDate cancelTime = order.get().getStartTime().minusDays(1);
         if (cancelTime.isEqual(localDate) || cancelTime.isAfter(localDate)) {
             orderService.remove(idOrder);
+//            order.get().setStatus(2);
+//            orderService.save(order.get());
+
             return new ResponseEntity<>(new ResponseMessage("ok"),HttpStatus.OK);
         } else
             return new ResponseEntity<>(new ResponseMessage("Không thể hủy! khách hàng chỉ có thể hủy thuê 1 ngày trước ngày bắt đầu"),HttpStatus.CONFLICT);
