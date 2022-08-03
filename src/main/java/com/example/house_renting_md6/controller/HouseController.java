@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -64,6 +65,15 @@ public class HouseController {
         houseOptional.get().setStatus(0);
         houseService.save(houseOptional.get());
         return new ResponseEntity<>(houseOptional.get(), HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/find-by-ownerId")  // Tìm theo id User đăng nhập để ra số house đã đăng của id đó!
+    public ResponseEntity<Iterable<House>> findHouseByOwnerId(@RequestParam(value = "owner_id") Long owner_id) {
+        List<House> houses = (List<House>) houseService.findByOwnerId(owner_id);
+        if (houses.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(houses, HttpStatus.OK);
     }
 
 

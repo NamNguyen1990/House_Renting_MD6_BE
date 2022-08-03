@@ -43,5 +43,10 @@ public class HouseServiceImpl implements HouseService {
         return houseRepository.findLastHouse();
     }
 
+    @Override
+    public Iterable<House> findByOwnerId(Long owner_id) {
+        return houseRepository.findByOwnerId(owner_id);
+    }
+
 
 }
