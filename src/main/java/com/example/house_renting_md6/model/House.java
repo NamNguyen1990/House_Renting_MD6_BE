@@ -30,6 +30,8 @@ public class House {
     private User owner;
     private int status;
 
+    private String avatarHouse;
+
     public House() {
     }
 
@@ -111,5 +113,13 @@ public class House {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getAvatarHouse() {
+        return avatarHouse;
+    }
+
+    public void setAvatarHouse(String avatarHouse) {
+        this.avatarHouse = avatarHouse;
     }
 }
