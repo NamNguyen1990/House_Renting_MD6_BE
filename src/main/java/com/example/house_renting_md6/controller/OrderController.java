@@ -14,8 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -32,10 +34,13 @@ public class OrderController {
     OrderServiceImpl orderService;
 
     @PostMapping("/{idHome}/{idCustomer}")
-    public ResponseEntity<?> orderHome(@RequestBody Order order, @PathVariable Long idHome, @PathVariable Long idCustomer) {
+    public ResponseEntity<?> orderHome(@Valid @RequestBody Order order, @PathVariable Long idHome, @PathVariable Long idCustomer, BindingResult bindingResult) {
         Optional<House> house = houseService.findById(idHome);
         Optional<User> user = userService.findById(idCustomer);
         List<Order> orders = orderService.findAllByHouse(house.get());
+        if (bindingResult.hasFieldErrors()) {
+            return new ResponseEntity<>(new ResponseBody("0001", "Invalid input parameter!"), HttpStatus.BAD_REQUEST);
+        }
         if (house.get().getOwner().getId() == idCustomer) {
             return new ResponseEntity<>(new ResponseMessage("Not rent your house!"), HttpStatus.OK);
         }
@@ -43,7 +48,7 @@ public class OrderController {
             order.setCustomer(user.get());
             order.setHouse(house.get());
             orderService.save(order);
-            return new ResponseEntity<>(new ResponseBody("0001","Order Success",orderService.save(order)), HttpStatus.CREATED);
+            return new ResponseEntity<>(new ResponseBody("0000","Order Success",orderService.save(order)), HttpStatus.CREATED);
         } else {
             if (!order.getEndTime().isAfter(order.getStartTime())) {
                 return new ResponseEntity<>(new ResponseBody("0001","The start time must be less than the end time!"), HttpStatus.OK);
@@ -67,7 +72,7 @@ public class OrderController {
             }
             order.setCustomer(user.get());
             order.setHouse(house.get());
-            return new ResponseEntity<>(new ResponseBody("0001","Order Success",orderService.save(order)), HttpStatus.CREATED);
+            return new ResponseEntity<>(new ResponseBody("0000","Order Success",orderService.save(order)), HttpStatus.CREATED);
         }
     }
 

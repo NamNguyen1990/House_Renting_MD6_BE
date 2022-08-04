@@ -3,6 +3,10 @@ package com.example.house_renting_md6.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.function.Consumer;
@@ -24,11 +28,21 @@ public class Order {
     private LocalDate endTime;
     private long total;
     private int status;
+    @NotBlank
+    @Max(value = 35)
     private String name;
+    @NotBlank
+    @Email
     private String email;
+    @NotBlank
+    @Max(value = 10)
+    @Min(value = 10)
     private String phone;
+    @NotBlank
     private String adult;
+    @NotBlank
     private String kid;
+    @Max(value = 1000)
     private String request;
 
     public Order() {
