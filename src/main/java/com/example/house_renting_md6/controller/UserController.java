@@ -81,7 +81,8 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -119,28 +120,23 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PutMapping("/users/change-password/{id}")
-    public ResponseEntity<?> updatePassword(@RequestParam String oldPassword, @RequestParam String newPassword, @PathVariable Long id) {
-        Optional<User> userOptional = userService.findById(id);
-        boolean matches = passwordEncoder.matches(oldPassword, userOptional.get().getPassword());
-        boolean matches1 = passwordEncoder.matches(newPassword, userOptional.get().getPassword());
-        if (matches) {
-            if (!matches1) {
-                userOptional.get().setPassword(passwordEncoder.encode(newPassword));
-                userOptional.get().setConfirmPassword(passwordEncoder.encode(newPassword));
-                userOptional.get().setEnabled(userOptional.get().isEnabled());
-                userOptional.get().setRoles(userOptional.get().getRoles());
-                userOptional.get().setUsername(userOptional.get().getUsername());
-                userOptional.get().setId(userOptional.get().getId());
-                userOptional.get().setEmail(userOptional.get().getEmail());
-                userOptional.get().setPhone(userOptional.get().getPhone());
-                userOptional.get().setAddress(userOptional.get().getAddress());
-                    userServiceImpl.update(userOptional.get());
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else return new ResponseEntity<>(HttpStatus.CONFLICT);
-        } else return new ResponseEntity<>(HttpStatus.CONFLICT);
-    }
-
+    @PutMapping("/users/edit-password/{id}")
+    public ResponseEntity<User> updateUserPassword(@PathVariable Long id, @RequestParam String oldPassword, @RequestParam String newPassword) {
+        Optional<User> userOptional = this.userService.findById(id);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(userOptional.get().getUsername(), oldPassword));
+        String jwt = jwtService.generateTokenLogin(authentication);
+        if (jwt == null) {
+            System.out.println("Mật khẩu cũ không đúng");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            userOptional.get().setId(id);
+            userOptional.get().setPassword(passwordEncoder.encode(newPassword));
+        }
+        userService.save(userOptional.get());
+        return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
+        }
+   
 
     @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
