@@ -37,7 +37,7 @@ public class OrderController {
         Optional<User> user = userService.findById(idCustomer);
         List<Order> orders = orderService.findAllByHouse(house.get());
         if (house.get().getOwner().getId() == idCustomer) {
-            return new ResponseEntity<>(new ResponseMessage("not rent your house!"), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseMessage("Not rent your house!"), HttpStatus.OK);
         }
         if (orders.isEmpty()) {
             order.setCustomer(user.get());
@@ -51,17 +51,17 @@ public class OrderController {
             for (int i = 0; i < orders.size(); i++) {
                 if (orders.get(i).getEndTime().isAfter(order.getStartTime())) {
                     if (orders.get(i).getStartTime().isBefore(order.getStartTime())) {
-                        return new ResponseEntity<>(new ResponseBody("0001","already had a tenant before you!"), HttpStatus.OK);
+                        return new ResponseEntity<>(new ResponseBody("0001","Already had a tenant before you!"), HttpStatus.OK);
                     }
                 }
                 if (orders.get(i).getEndTime().isAfter(order.getEndTime())) {
                     if (orders.get(i).getStartTime().isBefore(order.getEndTime())) {
-                        return new ResponseEntity<>(new ResponseBody("0001","already had a tenant before you!"), HttpStatus.OK);
+                        return new ResponseEntity<>(new ResponseBody("0001","Already had a tenant before you!"), HttpStatus.OK);
                     }
                 }
                 if (orders.get(i).getStartTime().isAfter(order.getStartTime()) || orders.get(i).getStartTime().isEqual(order.getStartTime())) {
                     if (orders.get(i).getEndTime().isBefore(order.getEndTime()) || orders.get(i).getEndTime().isEqual(order.getEndTime())) {
-                        return new ResponseEntity<>(new ResponseBody("0001","already had a tenant before you!"), HttpStatus.OK);
+                        return new ResponseEntity<>(new ResponseBody("0001","Already had a tenant before you!"), HttpStatus.OK);
                     }
                 }
             }
@@ -81,9 +81,9 @@ public class OrderController {
 //            order.get().setStatus(2);
 //            orderService.save(order.get());
 
-            return new ResponseEntity<>(new ResponseMessage("ok"),HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseMessage("Ok"),HttpStatus.OK);
         } else
-            return new ResponseEntity<>(new ResponseMessage("Không thể hủy! khách hàng chỉ có thể hủy thuê 1 ngày trước ngày bắt đầu"),HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ResponseMessage("Can't cancel! Customers can only cancel the rental 1 day before the start date"),HttpStatus.CONFLICT);
     }
 
     @GetMapping

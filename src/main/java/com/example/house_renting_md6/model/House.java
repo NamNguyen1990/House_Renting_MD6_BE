@@ -11,20 +11,20 @@ public class House {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "Không được để trống tên")
+    @NotBlank(message = "Names cannot be left blank")
     private String name;
     @ManyToOne
     private Category category;
-    @NotBlank(message = "Không được để trống địa chỉ")
+    @NotBlank(message = "The address cannot be left blank")
     private String address;
-    @Max(value = 10, message = "Nhập nhiều nhất 10 phòng ngủ")
-    @Min(value = 1, message = "Nhập ít nhất 1 phòng ngủ")
+    @Max(value = 10, message = "Enter at most 10 bedrooms")
+    @Min(value = 1, message = "Enter at least 1 bedroom")
     private int bedroom;
-    @Max(value = 3, message = "Nhập nhiều nhất 3 phòng tăm")
-    @Min(value = 1, message = "Nhập ít nhất 1 phòng tắm")
+    @Max(value = 3, message = "Enter at most 3 rooms")
+    @Min(value = 1, message = "Enter at least 1 bathroom")
     private int bathroom;
     private String description;
-    @Min(value = 1, message = "Giá thấp nhất là 1")
+    @Min(value = 1, message = "The lowest price is 1")
     private int price;
     @ManyToOne
     private User owner;

@@ -54,13 +54,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(User user) throws CustomException {
         if (!isCorrectConfirmPassword(user)) {
-            throw new CustomException("Nhập lại mật khẩu không đúng!");
+            throw new CustomException("Password incorrect, please try again!");
         }
         if (existsByUsername(user.getUsername())) {
-            throw new CustomException("Tên đăng nhập đã được sử dụng!");
+            throw new CustomException("Username already in use!");
         }
         if (existsByPhone(user.getPhone())) {
-            throw new CustomException("Số điện thoại đã được đăng ký!");
+            throw new CustomException("Phone number registered!");
         }
         Role role;
         Set<Role> roles = new HashSet<>();
