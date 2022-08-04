@@ -24,8 +24,8 @@ public class OrderServiceImpl implements IOrderService<Order> {
     }
 
     @Override
-    public void save(Order order) {
-        orderRepository.save(order);
+    public Order save(Order order) {
+        return orderRepository.save(order);
     }
 
     @Override
@@ -41,5 +41,10 @@ public class OrderServiceImpl implements IOrderService<Order> {
     @Override
     public Page<Order> findAll(Pageable pageable) {
         return orderRepository.findAll(pageable);
+    }
+
+    @Override
+    public Iterable<Order> findOderByCustomerId(Long customer_id) {
+        return orderRepository.findOderByCustomerId(customer_id);
     }
 }
