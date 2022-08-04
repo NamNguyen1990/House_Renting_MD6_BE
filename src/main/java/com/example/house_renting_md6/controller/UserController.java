@@ -127,11 +127,15 @@ public class UserController {
         if (matches) {
             if (!matches1) {
                 userOptional.get().setPassword(passwordEncoder.encode(newPassword));
-                try {
-                    userService.save(userOptional.get());
-                } catch (CustomException e) {
-                    throw new RuntimeException(e);
-                }
+                userOptional.get().setConfirmPassword(passwordEncoder.encode(newPassword));
+                userOptional.get().setEnabled(userOptional.get().isEnabled());
+                userOptional.get().setRoles(userOptional.get().getRoles());
+                userOptional.get().setUsername(userOptional.get().getUsername());
+                userOptional.get().setId(userOptional.get().getId());
+                userOptional.get().setEmail(userOptional.get().getEmail());
+                userOptional.get().setPhone(userOptional.get().getPhone());
+                userOptional.get().setAddress(userOptional.get().getAddress());
+                    userServiceImpl.update(userOptional.get());
                 return new ResponseEntity<>(HttpStatus.OK);
             } else return new ResponseEntity<>(HttpStatus.CONFLICT);
         } else return new ResponseEntity<>(HttpStatus.CONFLICT);
