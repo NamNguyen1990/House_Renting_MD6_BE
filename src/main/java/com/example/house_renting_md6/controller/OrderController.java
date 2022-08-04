@@ -2,6 +2,7 @@ package com.example.house_renting_md6.controller;
 
 import com.example.house_renting_md6.model.House;
 import com.example.house_renting_md6.model.Order;
+import com.example.house_renting_md6.model.ResponseBody;
 import com.example.house_renting_md6.model.ResponseMessage;
 import com.example.house_renting_md6.model.User;
 import com.example.house_renting_md6.service.UserService;
@@ -36,38 +37,37 @@ public class OrderController {
         Optional<User> user = userService.findById(idCustomer);
         List<Order> orders = orderService.findAllByHouse(house.get());
         if (house.get().getOwner().getId() == idCustomer) {
-            return new ResponseEntity<>(new ResponseMessage("không được thuê nhà do mình tạo!"), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ResponseMessage("not rent your house!"), HttpStatus.OK);
         }
         if (orders.isEmpty()) {
             order.setCustomer(user.get());
             order.setHouse(house.get());
             orderService.save(order);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(new ResponseBody("0001","Order Success",orderService.save(order)), HttpStatus.CREATED);
         } else {
             if (!order.getEndTime().isAfter(order.getStartTime())) {
-                return new ResponseEntity<>(new ResponseMessage("Thời gian kết thúc phải nhỏ hơn thời gian bắt đầu"), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(new ResponseBody("0001","The start time must be less than the end time!"), HttpStatus.OK);
             }
             for (int i = 0; i < orders.size(); i++) {
                 if (orders.get(i).getEndTime().isAfter(order.getStartTime())) {
                     if (orders.get(i).getStartTime().isBefore(order.getStartTime())) {
-                        return new ResponseEntity<>(new ResponseMessage("Đã có người thuê trong khoảng thời gian này!"), HttpStatus.CONFLICT);
+                        return new ResponseEntity<>(new ResponseBody("0001","already had a tenant before you!"), HttpStatus.OK);
                     }
                 }
                 if (orders.get(i).getEndTime().isAfter(order.getEndTime())) {
                     if (orders.get(i).getStartTime().isBefore(order.getEndTime())) {
-                        return new ResponseEntity<>(new ResponseMessage("Đã có người thuê trong khoảng thời gian này!"), HttpStatus.CONFLICT);
+                        return new ResponseEntity<>(new ResponseBody("0001","already had a tenant before you!"), HttpStatus.OK);
                     }
                 }
                 if (orders.get(i).getStartTime().isAfter(order.getStartTime()) || orders.get(i).getStartTime().isEqual(order.getStartTime())) {
                     if (orders.get(i).getEndTime().isBefore(order.getEndTime()) || orders.get(i).getEndTime().isEqual(order.getEndTime())) {
-                        return new ResponseEntity<>(new ResponseMessage("Đã có người thuê trong khoảng thời gian này!"), HttpStatus.CONFLICT);
+                        return new ResponseEntity<>(new ResponseBody("0001","already had a tenant before you!"), HttpStatus.OK);
                     }
                 }
             }
             order.setCustomer(user.get());
             order.setHouse(house.get());
-            orderService.save(order);
-            return new ResponseEntity<>(new ResponseMessage("ok"), HttpStatus.CREATED);
+            return new ResponseEntity<>(new ResponseBody("0001","Order Success",orderService.save(order)), HttpStatus.CREATED);
         }
     }
 

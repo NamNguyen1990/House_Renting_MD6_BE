@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface IOrderService<T> {
     List<Order> findAllByHouse(House house);
 
-    void save(Order order);
+    Order save(Order order);
 
     Optional<Order> findById(Long id);
 
