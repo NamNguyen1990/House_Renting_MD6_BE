@@ -1,12 +1,11 @@
 package com.example.house_renting_md6.repository;
 
+import com.example.house_renting_md6.model.Category;
 
-import com.example.house_renting_md6.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
-    Role findByName(String roleName);
+public interface CategoryRepository extends JpaRepository<Category, Long> {
+
 }

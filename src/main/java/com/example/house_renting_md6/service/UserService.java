@@ -1,5 +1,6 @@
 package com.example.house_renting_md6.service;
 
+import com.example.house_renting_md6.CustomException;
 import com.example.house_renting_md6.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -7,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.util.Optional;
 
 public interface UserService extends UserDetailsService {
-    void save(User user);
+    User save(User user) throws CustomException;
 
     Iterable<User> findAll();
 
@@ -24,4 +25,8 @@ public interface UserService extends UserDetailsService {
     boolean isRegister(User user);
 
     boolean isCorrectConfirmPassword(User user);
+
+    boolean existsByUsername(String username);
+
+    boolean existsByPhone(String phone);
 }

@@ -1,22 +1,35 @@
 package com.example.house_renting_md6.service.impl;
 
+import com.example.house_renting_md6.CustomException;
+import com.example.house_renting_md6.model.Role;
 import com.example.house_renting_md6.model.User;
 import com.example.house_renting_md6.model.UserPrinciple;
 import com.example.house_renting_md6.repository.UserRepository;
+import com.example.house_renting_md6.service.RoleService;
 import com.example.house_renting_md6.service.UserService;
+import com.example.house_renting_md6.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -39,8 +52,29 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void save(User user) {
-        userRepository.save(user);
+    public User save(User user) throws CustomException {
+        if (!isCorrectConfirmPassword(user)) {
+            throw new CustomException("Password incorrect, please try again!");
+        }
+        if (existsByUsername(user.getUsername())) {
+            throw new CustomException("Username already in use!");
+        }
+        if (existsByPhone(user.getPhone())) {
+            throw new CustomException("Phone number registered!");
+        }
+        Role role;
+        Set<Role> roles = new HashSet<>();
+        if (user.getRoles() != null) {
+            role = roleService.findByName(Constants.ROLE_ADMIN);
+        } else {
+            role = roleService.findByName(Constants.ROLE_USER);
+        }
+        roles.add(role);
+        user.setRoles(roles);
+        user.setAvatar("https://firebasestorage.googleapis.com/v0/b/pro1-1ab26.appspot.com/o/RoomsImages%2F1659601471359?alt=media&token=183c6997-41ed-4b1f-941f-2e91a7242a9d");
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
+        return userRepository.save(user);
     }
 
     @Override
@@ -88,7 +122,7 @@ public class UserServiceImpl implements UserService {
         boolean isCorrectUser = false;
         for (User currentUser : users) {
             if (currentUser.getUsername().equals(user.getUsername())
-                    && user.getPassword().equals(currentUser.getPassword())&&
+                    && user.getPassword().equals(currentUser.getPassword()) &&
                     currentUser.isEnabled()) {
                 isCorrectUser = true;
             }
@@ -111,10 +145,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isCorrectConfirmPassword(User user) {
-        boolean isCorrentConfirmPassword = false;
-        if(user.getPassword().equals(user.getConfirmPassword())){
-            isCorrentConfirmPassword = true;
-        }
-        return isCorrentConfirmPassword;
+        return user.getPassword().equals(user.getConfirmPassword());
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public boolean existsByPhone(String phone) {
+        return userRepository.existsByPhone(phone);
+    }
+
+    public User update(User user) {
+        return userRepository.save(user);
     }
 }
