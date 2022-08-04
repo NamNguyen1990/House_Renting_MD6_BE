@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import javax.persistence.*;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.function.Consumer;
 
 @Entity
 @Table(name = "orders")
@@ -21,7 +22,7 @@ public class Order {
     private LocalDate startTime;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate endTime;
-    private double total;
+    private long total;
     private int status;
     private String name;
     private String email;
@@ -73,11 +74,11 @@ public class Order {
         this.endTime = endTime;
     }
 
-    public double getTotal() {
+    public long getTotal() {
         return total;
     }
 
-    public void setTotal(int total) {
+    public void setTotal(long total) {
         this.total = total;
     }
 
@@ -127,10 +128,6 @@ public class Order {
 
     public void setKid(String kid) {
         this.kid = kid;
-    }
-
-    public void setTotal(double total) {
-        this.total = total;
     }
 
     public String getRequest() {
