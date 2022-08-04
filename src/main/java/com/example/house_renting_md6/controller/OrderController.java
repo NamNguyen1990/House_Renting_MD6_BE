@@ -78,6 +78,9 @@ public class OrderController {
         LocalDate cancelTime = order.get().getStartTime().minusDays(1);
         if (cancelTime.isEqual(localDate) || cancelTime.isAfter(localDate)) {
             orderService.remove(idOrder);
+//            order.get().setStatus(2);
+//            orderService.save(order.get());
+
             return new ResponseEntity<>(new ResponseMessage("ok"),HttpStatus.OK);
         } else
             return new ResponseEntity<>(new ResponseMessage("Không thể hủy! khách hàng chỉ có thể hủy thuê 1 ngày trước ngày bắt đầu"),HttpStatus.CONFLICT);
@@ -96,4 +99,15 @@ public class OrderController {
         }
         return new ResponseEntity<>(houseOptional.get(), HttpStatus.OK);
     }
+
+    @GetMapping("/find-order-by-customer_id")  // Tìm theo id User đăng nhập để ra số hóa đơn  của id đó!
+    public ResponseEntity<Iterable<Order>> findOrderByOwnerId(@RequestParam(value = "customer_id") Long customer_id) {
+        List<Order> orders = (List<Order>) orderService.findOderByCustomerId(customer_id);
+        if (orders.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
 }
+

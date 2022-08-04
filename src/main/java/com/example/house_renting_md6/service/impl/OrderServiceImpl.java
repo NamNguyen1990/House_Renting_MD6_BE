@@ -42,4 +42,9 @@ public class OrderServiceImpl implements IOrderService<Order> {
     public Page<Order> findAll(Pageable pageable) {
         return orderRepository.findAll(pageable);
     }
+
+    @Override
+    public Iterable<Order> findOderByCustomerId(Long customer_id) {
+        return orderRepository.findOderByCustomerId(customer_id);
+    }
 }
