@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserService {
         }
         roles.add(role);
         user.setRoles(roles);
+        user.setAvatar("https://firebasestorage.googleapis.com/v0/b/pro1-1ab26.appspot.com/o/RoomsImages%2F1659601471359?alt=media&token=183c6997-41ed-4b1f-941f-2e91a7242a9d");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
         return userRepository.save(user);
