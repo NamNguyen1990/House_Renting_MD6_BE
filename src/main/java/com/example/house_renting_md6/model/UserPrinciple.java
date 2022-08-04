@@ -16,11 +16,11 @@ public class UserPrinciple implements UserDetails {
 
     private Long id;
 
-    @NotBlank(message = "Tên đăng nhập không được trống")
+    @NotBlank(message = "Username cannot be empty")
     @Column(unique = true, nullable = false)
     private String username;
 
-    @NotBlank(message = "Mật khẩu không được trống, hoặc không đúng mật khẩu")
+    @NotBlank(message = "Password cannot be blank, or the password is incorrect")
     @Column(nullable = false)
     private String password;
 

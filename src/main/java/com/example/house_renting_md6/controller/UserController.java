@@ -70,7 +70,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<ResponseBody> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
-            return new ResponseEntity<>(new ResponseBody("0001", "Tham số đầu vào không hợp lệ"), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseBody("0001", "Invalid input parameter"), HttpStatus.OK);
         }
         try {
             return new ResponseEntity<>(new ResponseBody("0000", "Sign Up Success", userService.save(user)), HttpStatus.CREATED);
