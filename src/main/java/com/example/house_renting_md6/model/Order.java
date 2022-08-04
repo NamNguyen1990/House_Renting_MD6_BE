@@ -14,12 +14,7 @@ public class Order {
     private Long id;
     @ManyToOne
     private House house;
-    private String name;
-//    private String email;
-//    private String phone;
-//    private String adult;
-//    private String kid;
-//    private String request;
+
     @ManyToOne
     private User customer;
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -28,7 +23,12 @@ public class Order {
     private LocalDate endTime;
     private double total;
     private int status;
-
+    private String name;
+    private String email;
+    private String phone;
+    private String adult;
+    private String kid;
+    private String request;
 
     public Order() {
     }
@@ -97,47 +97,47 @@ public class Order {
         this.name = name;
     }
 
-//    public String getEmail() {
-//        return email;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
-//
-//    public String getPhone() {
-//        return phone;
-//    }
-//
-//    public void setPhone(String phone) {
-//        this.phone = phone;
-//    }
-//
-//    public String getAdult() {
-//        return adult;
-//    }
-//
-//    public void setAdult(String adult) {
-//        this.adult = adult;
-//    }
-//
-//    public String getKid() {
-//        return kid;
-//    }
-//
-//    public void setKid(String kid) {
-//        this.kid = kid;
-//    }
-//
-//    public void setTotal(double total) {
-//        this.total = total;
-//    }
-//
-//    public String getRequest() {
-//        return request;
-//    }
-//
-//    public void setRequest(String request) {
-//        this.request = request;
-//    }
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAdult() {
+        return adult;
+    }
+
+    public void setAdult(String adult) {
+        this.adult = adult;
+    }
+
+    public String getKid() {
+        return kid;
+    }
+
+    public void setKid(String kid) {
+        this.kid = kid;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public String getRequest() {
+        return request;
+    }
+
+    public void setRequest(String request) {
+        this.request = request;
+    }
 }
