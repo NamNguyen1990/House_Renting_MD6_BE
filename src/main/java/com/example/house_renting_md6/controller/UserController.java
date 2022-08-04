@@ -133,7 +133,7 @@ public class UserController {
             userOptional.get().setId(id);
             userOptional.get().setPassword(passwordEncoder.encode(newPassword));
         }
-        userService.save(userOptional.get());
+//        userService.save(userOptional.get());
         return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
         }
    

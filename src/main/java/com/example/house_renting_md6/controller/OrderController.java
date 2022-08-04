@@ -34,7 +34,7 @@ public class OrderController {
     OrderServiceImpl orderService;
 
     @PostMapping("/{idHome}/{idCustomer}")
-    public ResponseEntity<?> orderHome(@Valid @RequestBody Order order, @PathVariable Long idHome, @PathVariable Long idCustomer, BindingResult bindingResult) {
+    public ResponseEntity<?> orderHome( @RequestBody Order order, @PathVariable Long idHome, @PathVariable Long idCustomer, BindingResult bindingResult) {
         Optional<House> house = houseService.findById(idHome);
         Optional<User> user = userService.findById(idCustomer);
         List<Order> orders = orderService.findAllByHouse(house.get());
@@ -47,7 +47,7 @@ public class OrderController {
         if (orders.isEmpty()) {
             order.setCustomer(user.get());
             order.setHouse(house.get());
-            orderService.save(order);
+            order.setStatus(1);
             return new ResponseEntity<>(new ResponseBody("0000","Order Success",orderService.save(order)), HttpStatus.CREATED);
         } else {
             if (!order.getEndTime().isAfter(order.getStartTime())) {
@@ -72,6 +72,7 @@ public class OrderController {
             }
             order.setCustomer(user.get());
             order.setHouse(house.get());
+            order.setStatus(1);
             return new ResponseEntity<>(new ResponseBody("0000","Order Success",orderService.save(order)), HttpStatus.CREATED);
         }
     }
