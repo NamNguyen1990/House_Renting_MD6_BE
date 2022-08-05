@@ -106,7 +106,7 @@ public class OrderController {
         return new ResponseEntity<>(houseOptional.get(), HttpStatus.OK);
     }
 
-    @GetMapping("/find-order-by-customer_id")  // Tìm theo id User đăng nhập để ra số hóa đơn  của id đó!
+    @GetMapping("/find")
     public ResponseEntity<Iterable<Order>> findOrderByOwnerId(@RequestParam(value = "customer_id") Long customer_id) {
         List<Order> orders = (List<Order>) orderService.findOderByCustomerId(customer_id);
         if (orders.isEmpty()) {

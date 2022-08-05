@@ -123,16 +123,9 @@ public class UserController {
         if (!userOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
-        user.setEnabled(userOptional.get().isEnabled());
-        user.setRoles(userOptional.get().getRoles());
-        user.setUsername(userOptional.get().getUsername());
-        user.setId(userOptional.get().getId());
-        user.setEmail(userOptional.get().getEmail());
-        user.setPhone(userOptional.get().getPhone());
-        user.setAddress(userOptional.get().getAddress());
-        userServiceImpl.update(user);
+        userOptional.get().setPassword(passwordEncoder.encode(user.getPassword()));
+        userOptional.get().setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
+        userServiceImpl.update(userOptional.get());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
