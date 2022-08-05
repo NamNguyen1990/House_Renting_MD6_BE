@@ -43,7 +43,7 @@ public class OrderController {
             return new ResponseEntity<>(new ResponseBody("0001", "Invalid input parameter!"), HttpStatus.BAD_REQUEST);
         }
         if (house.get().getOwner().getId() == idCustomer) {
-            return new ResponseEntity<>(new ResponseMessage("Not rent your house!"), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseBody("0001","Not rent your house!"), HttpStatus.OK);
         }
         if (orders.isEmpty()) {
             order.setCustomer(user.get());
