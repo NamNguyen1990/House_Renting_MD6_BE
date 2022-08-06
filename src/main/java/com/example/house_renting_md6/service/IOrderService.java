@@ -1,5 +1,6 @@
 package com.example.house_renting_md6.service;
 
+import com.example.house_renting_md6.CustomException;
 import com.example.house_renting_md6.model.House;
 import com.example.house_renting_md6.model.Order;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,8 @@ import java.util.Optional;
 @Service
 public interface IOrderService<T> {
     List<Order> findAllByHouse(House house);
+
+    List<Order> totalMoneyByMonth(Long id, int month ,int year) throws CustomException;
 
     Order save(Order order);
 
