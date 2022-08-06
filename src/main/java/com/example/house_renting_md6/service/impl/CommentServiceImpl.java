@@ -18,7 +18,13 @@ public class CommentServiceImpl implements CommentService {
     public Iterable<Comment> findAll() {
        return commentReponsitory.findAll();
     }
-// comment không dùng page
+
+    @Override
+    public Iterable<Comment> findByHouse(Long id) {
+        return commentReponsitory.findCommentByHouseId(id);
+    }
+
+    // comment không dùng page
     @Override
     public Page<Comment> findAll(Pageable pageable) {
         return null;

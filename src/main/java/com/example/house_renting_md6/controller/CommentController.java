@@ -1,6 +1,7 @@
 package com.example.house_renting_md6.controller;
 
 import com.example.house_renting_md6.model.Comment;
+import com.example.house_renting_md6.model.Image;
 import com.example.house_renting_md6.service.impl.CommentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,10 +23,10 @@ public class CommentController {
         return new ResponseEntity<>(commentService.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<Comment>> findById(@PathVariable long id) {
-        return new ResponseEntity<>(commentService.findById(id), HttpStatus.OK);
-    }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<Optional<Comment>> findById(@PathVariable long id) {
+//        return new ResponseEntity<>(commentService.findById(id), HttpStatus.OK);
+//    }
 
     @PostMapping()
     public ResponseEntity add(@RequestBody Comment comment) {
@@ -37,5 +38,10 @@ public class CommentController {
     public ResponseEntity<Comment> update(@PathVariable long id) {
         commentService.remove(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Iterable<Comment>> findCommentByHouseId(@PathVariable Long id) {
+        return new ResponseEntity<>(commentService.findByHouse(id),HttpStatus.OK);
     }
 }
