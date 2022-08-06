@@ -26,7 +26,7 @@ public class OrderServiceImpl implements IOrderService<Order> {
     }
 
     @Override
-    public List<Order> totalMoneyByMonth(Long id, int month, int year)  {
+    public List<Order> totalMoneyByMonth(Long id, int month, int year) throws CustomException {
         List<Order> orders = orderRepository.findAllByHouse_Id(id);
         List<Order> orderList = new ArrayList<>();
         for (int i = 0; i < orders.size(); i++) {
@@ -35,6 +35,9 @@ public class OrderServiceImpl implements IOrderService<Order> {
                      orderList.add(orders.get(i));
                 }
             }
+        }
+        if (orderList.size()==0){
+            throw new CustomException("You don't have any orders yet!");
         }
         return orderList;
     }

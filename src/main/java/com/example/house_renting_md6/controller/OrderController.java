@@ -122,7 +122,11 @@ public class OrderController {
     }
     @GetMapping("/total/{idHouse}")
     public ResponseEntity<ResponseBody> totalMoneyByMonth(@RequestParam int year,@RequestParam int month,@PathVariable Long idHouse) {
-        return new ResponseEntity<>(new ResponseBody("0000", "OK", orderService.totalMoneyByMonth(idHouse,month,year)), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(new ResponseBody("0000", "OK", orderService.totalMoneyByMonth(idHouse,month,year)), HttpStatus.OK);
+        } catch (CustomException e) {
+            return new ResponseEntity<>(new ResponseBody("0001", e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 }
 
