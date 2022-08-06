@@ -25,7 +25,7 @@ public class House {
     private int bathroom;
     private String description;
     @Min(value = 1, message = "The lowest price is 1")
-    private int price;
+    private Long price;
     @ManyToOne
     private User owner;
     private int status;
@@ -91,11 +91,11 @@ public class House {
         this.description = description;
     }
 
-    public int getPrice() {
+    public long getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(long price) {
         this.price = price;
     }
 

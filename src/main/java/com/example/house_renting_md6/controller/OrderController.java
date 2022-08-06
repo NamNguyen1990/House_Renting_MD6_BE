@@ -19,7 +19,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +52,7 @@ public class OrderController {
             order.setCustomer(user.get());
             order.setHouse(house.get());
             order.setStatus(1);
+            order.setTotal(order.getHouse().getPrice()* ChronoUnit.DAYS.between(order.getStartTime(),order.getEndTime()));
             return new ResponseEntity<>(new ResponseBody("0000","Order Success",orderService.save(order)), HttpStatus.CREATED);
         } else {
             if (!order.getEndTime().isAfter(order.getStartTime())) {
@@ -74,6 +78,7 @@ public class OrderController {
             order.setCustomer(user.get());
             order.setHouse(house.get());
             order.setStatus(1);
+            order.setTotal(order.getHouse().getPrice()* ChronoUnit.DAYS.between(order.getStartTime(),order.getEndTime()));
             return new ResponseEntity<>(new ResponseBody("0000","Order Success",orderService.save(order)), HttpStatus.CREATED);
         }
     }
@@ -84,10 +89,8 @@ public class OrderController {
         LocalDate localDate = LocalDate.now();
         LocalDate cancelTime = order.get().getStartTime().minusDays(1);
         if (cancelTime.isEqual(localDate) || cancelTime.isAfter(localDate)) {
-            orderService.remove(idOrder);
-//            order.get().setStatus(2);
-//            orderService.save(order.get());
-
+            order.get().setStatus(0);
+            orderService.save(order.get());
             return new ResponseEntity<>(new ResponseMessage("Ok"),HttpStatus.OK);
         } else
             return new ResponseEntity<>(new ResponseMessage("Can't cancel! Customers can only cancel the rental 1 day before the start date"),HttpStatus.CONFLICT);
@@ -115,6 +118,5 @@ public class OrderController {
         }
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
-
 }
 
