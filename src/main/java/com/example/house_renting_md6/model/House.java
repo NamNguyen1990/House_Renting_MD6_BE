@@ -4,6 +4,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 
 @Entity
@@ -29,6 +31,9 @@ public class House {
     @ManyToOne
     private User owner;
     private int status;
+
+    @OneToMany(mappedBy = "house", fetch = FetchType.LAZY)
+    private Set<Image> images = new LinkedHashSet<>();
 
     private String avatarHouse;
 
@@ -121,5 +126,13 @@ public class House {
 
     public void setAvatarHouse(String avatarHouse) {
         this.avatarHouse = avatarHouse;
+    }
+
+    public Set<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<Image> images) {
+        this.images = images;
     }
 }
