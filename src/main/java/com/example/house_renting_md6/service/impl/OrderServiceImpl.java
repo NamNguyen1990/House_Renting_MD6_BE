@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,18 +27,15 @@ public class OrderServiceImpl implements IOrderService<Order> {
     }
 
     @Override
-    public List<Order> totalMoneyByMonth(Long id, int month, int year) throws CustomException {
+    public List<Order> totalMoneyByMonth(Long id, int month, int year) {
         List<Order> orders = orderRepository.findAllByHouse_Id(id);
         List<Order> orderList = new ArrayList<>();
         for (int i = 0; i < orders.size(); i++) {
-            if (orders.get(i).getStartTime().minusDays(1).getYear()==year){
-                if (orders.get(i).getStartTime().minusDays(1).getMonthValue()==month){
-                     orderList.add(orders.get(i));
+            if (orders.get(i).getStartTime().minusDays(1).getYear() == year) {
+                if (orders.get(i).getStartTime().minusDays(1).getMonthValue() == month) {
+                    orderList.add(orders.get(i));
                 }
             }
-        }
-        if (orderList.size()==0){
-            throw new CustomException("You don't have any orders yet!");
         }
         return orderList;
     }
@@ -65,5 +63,32 @@ public class OrderServiceImpl implements IOrderService<Order> {
     @Override
     public Iterable<Order> findOderByCustomerId(Long customer_id) {
         return orderRepository.findOderByCustomerId(customer_id);
+    }
+
+    @Override
+    public List<Order> findOderByHouseId(Long idHouse) {
+        return orderRepository.findAllByHouse_Id(idHouse);
+    }
+
+    @Override
+    public void updateStatus() {
+        LocalDate now = LocalDate.now();
+        List<Order> orders = findAll1();
+        for (int i = 0; i < orders.size(); i++) {
+            if (now.compareTo(orders.get(i).getEndTime()) > 0) {
+                orders.get(i).setStatus(3);
+                save(orders.get(i));
+            } else {
+                if (now.compareTo(orders.get(i).getStartTime()) >= 0) {
+                    orders.get(i).setStatus(2);
+                    save(orders.get(i));
+                }
+            }
+        }
+    }
+
+    @Override
+    public List<Order> findAll1() {
+        return orderRepository.findAll();
     }
 }

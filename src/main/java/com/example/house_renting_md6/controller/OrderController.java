@@ -120,13 +120,28 @@ public class OrderController {
         }
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
+
     @GetMapping("/total/{idHouse}")
-    public ResponseEntity<ResponseBody> totalMoneyByMonth(@RequestParam int year,@RequestParam int month,@PathVariable Long idHouse) {
-        try {
-            return new ResponseEntity<>(new ResponseBody("0000", "OK", orderService.totalMoneyByMonth(idHouse,month,year)), HttpStatus.OK);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ResponseBody("0001", e.getMessage()), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ResponseBody> totalMoneyByMonth(@RequestParam int year, @RequestParam int month, @PathVariable Long idHouse) {
+        if (orderService.totalMoneyByMonth(idHouse, month, year).isEmpty()) {
+            return new ResponseEntity<>(new ResponseBody("0001", "You don't have any orders yet!"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ResponseBody("0000", "OK", orderService.totalMoneyByMonth(idHouse, month, year)), HttpStatus.OK);
         }
+    }
+
+    @GetMapping("/find-by-house/{id}")
+    public ResponseEntity<ResponseBody> findOrderByHouseId(@PathVariable Long id) {
+        List<Order> orders = orderService.findOderByHouseId(id);
+        if (orders.isEmpty()) {
+            return new ResponseEntity<>(new ResponseBody("0001", "House don't have any orders yet!"),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ResponseBody("0000", "OK",orders), HttpStatus.OK);
+    }
+    @GetMapping("/update-order")
+    public ResponseEntity<?> updateStatusOrder(){
+        orderService.updateStatus();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
 

@@ -23,5 +23,12 @@ public interface IOrderService<T> {
     void remove(Long id);
 
     Page<Order> findAll(Pageable pageable);
+
     Iterable<Order> findOderByCustomerId (Long customer_id);
+
+    Iterable<Order> findOderByHouseId(Long idHouse);
+
+    void updateStatus();
+
+    List<Order> findAll1();
 }
