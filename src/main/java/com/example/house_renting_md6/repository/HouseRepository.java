@@ -25,7 +25,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "where h.status <> 0\n" +
             "group by houserenting_md6.orders.house_id\n" +
             "order by dem desc\n" +
-            "limit 5) as abc on abc.house_id = house.id",nativeQuery = true)
+            "limit 3) as abc on abc.house_id = house.id",nativeQuery = true)
     Iterable<House> findTop5();
 
 }
