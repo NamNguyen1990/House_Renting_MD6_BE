@@ -1,5 +1,6 @@
 package com.example.house_renting_md6.service.impl;
 
+import com.example.house_renting_md6.CustomException;
 import com.example.house_renting_md6.model.House;
 import com.example.house_renting_md6.model.Order;
 import com.example.house_renting_md6.repository.OrderRepository;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +23,23 @@ public class OrderServiceImpl implements IOrderService<Order> {
     @Override
     public List<Order> findAllByHouse(House house) {
         return orderRepository.findAllByHouse(house);
+    }
+
+    @Override
+    public List<Order> totalMoneyByMonth(Long id, int month, int year) throws CustomException {
+        List<Order> orders = orderRepository.findAllByHouse_Id(id);
+        List<Order> orderList = new ArrayList<>();
+        for (int i = 0; i < orders.size(); i++) {
+            if (orders.get(i).getStartTime().minusDays(1).getYear()==year){
+                if (orders.get(i).getStartTime().minusDays(1).getMonthValue()==month){
+                     orderList.add(orders.get(i));
+                }
+            }
+        }
+        if (orderList.size()==0){
+            throw new CustomException("You don't have any orders yet!");
+        }
+        return orderList;
     }
 
     @Override

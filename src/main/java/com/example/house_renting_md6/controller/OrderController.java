@@ -1,5 +1,6 @@
 package com.example.house_renting_md6.controller;
 
+import com.example.house_renting_md6.CustomException;
 import com.example.house_renting_md6.model.House;
 import com.example.house_renting_md6.model.Order;
 import com.example.house_renting_md6.model.ResponseBody;
@@ -46,40 +47,40 @@ public class OrderController {
             return new ResponseEntity<>(new ResponseBody("0001", "Invalid input parameter!"), HttpStatus.BAD_REQUEST);
         }
         if (house.get().getOwner().getId() == idCustomer) {
-            return new ResponseEntity<>(new ResponseBody("0001","Not rent your house!"), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseBody("0001", "Not rent your house!"), HttpStatus.OK);
         }
         if (orders.isEmpty()) {
             order.setCustomer(user.get());
             order.setHouse(house.get());
             order.setStatus(1);
-            order.setTotal(order.getHouse().getPrice()* ChronoUnit.DAYS.between(order.getStartTime(),order.getEndTime()));
-            return new ResponseEntity<>(new ResponseBody("0000","Order Success",orderService.save(order)), HttpStatus.CREATED);
+            order.setTotal(order.getHouse().getPrice() * ChronoUnit.DAYS.between(order.getStartTime(), order.getEndTime()));
+            return new ResponseEntity<>(new ResponseBody("0000", "Order Success", orderService.save(order)), HttpStatus.CREATED);
         } else {
             if (!order.getEndTime().isAfter(order.getStartTime())) {
-                return new ResponseEntity<>(new ResponseBody("0001","The start time must be less than the end time!"), HttpStatus.OK);
+                return new ResponseEntity<>(new ResponseBody("0001", "The start time must be less than the end time!"), HttpStatus.OK);
             }
             for (int i = 0; i < orders.size(); i++) {
                 if (orders.get(i).getEndTime().isAfter(order.getStartTime())) {
                     if (orders.get(i).getStartTime().isBefore(order.getStartTime())) {
-                        return new ResponseEntity<>(new ResponseBody("0001","Already had a tenant before you!"), HttpStatus.OK);
+                        return new ResponseEntity<>(new ResponseBody("0001", "Already had a tenant before you!"), HttpStatus.OK);
                     }
                 }
                 if (orders.get(i).getEndTime().isAfter(order.getEndTime())) {
                     if (orders.get(i).getStartTime().isBefore(order.getEndTime())) {
-                        return new ResponseEntity<>(new ResponseBody("0001","Already had a tenant before you!"), HttpStatus.OK);
+                        return new ResponseEntity<>(new ResponseBody("0001", "Already had a tenant before you!"), HttpStatus.OK);
                     }
                 }
                 if (orders.get(i).getStartTime().isAfter(order.getStartTime()) || orders.get(i).getStartTime().isEqual(order.getStartTime())) {
                     if (orders.get(i).getEndTime().isBefore(order.getEndTime()) || orders.get(i).getEndTime().isEqual(order.getEndTime())) {
-                        return new ResponseEntity<>(new ResponseBody("0001","Already had a tenant before you!"), HttpStatus.OK);
+                        return new ResponseEntity<>(new ResponseBody("0001", "Already had a tenant before you!"), HttpStatus.OK);
                     }
                 }
             }
             order.setCustomer(user.get());
             order.setHouse(house.get());
             order.setStatus(1);
-            order.setTotal(order.getHouse().getPrice()* ChronoUnit.DAYS.between(order.getStartTime(),order.getEndTime()));
-            return new ResponseEntity<>(new ResponseBody("0000","Order Success",orderService.save(order)), HttpStatus.CREATED);
+            order.setTotal(order.getHouse().getPrice() * ChronoUnit.DAYS.between(order.getStartTime(), order.getEndTime()));
+            return new ResponseEntity<>(new ResponseBody("0000", "Order Success", orderService.save(order)), HttpStatus.CREATED);
         }
     }
 
@@ -91,16 +92,17 @@ public class OrderController {
         if (cancelTime.isEqual(localDate) || cancelTime.isAfter(localDate)) {
             order.get().setStatus(0);
             orderService.save(order.get());
-            return new ResponseEntity<>(new ResponseMessage("Ok"),HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseMessage("Ok"), HttpStatus.OK);
         } else
-            return new ResponseEntity<>(new ResponseMessage("Can't cancel! Customers can only cancel the rental 1 day before the start date"),HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ResponseMessage("Can't cancel! Customers can only cancel the rental 1 day before the start date"), HttpStatus.CONFLICT);
     }
 
     @GetMapping
-    public ResponseEntity<Page<Order>>findAllHouse(@PageableDefault(value=8) Pageable pageable) {
-        Page<Order>orders=orderService.findAll(pageable);
-        return new ResponseEntity<>(orders,HttpStatus.OK);
+    public ResponseEntity<Page<Order>> findAllHouse(@PageableDefault(value = 8) Pageable pageable) {
+        Page<Order> orders = orderService.findAll(pageable);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Order> findById(@PathVariable Long id) {
         Optional<Order> houseOptional = orderService.findById(id);
@@ -117,6 +119,14 @@ public class OrderController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+    @GetMapping("/total/{idHouse}")
+    public ResponseEntity<ResponseBody> totalMoneyByMonth(@RequestParam int year,@RequestParam int month,@PathVariable Long idHouse) {
+        try {
+            return new ResponseEntity<>(new ResponseBody("0000", "OK", orderService.totalMoneyByMonth(idHouse,month,year)), HttpStatus.OK);
+        } catch (CustomException e) {
+            return new ResponseEntity<>(new ResponseBody("0001", e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 }
 
