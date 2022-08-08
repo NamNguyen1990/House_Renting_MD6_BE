@@ -82,5 +82,13 @@ public class HouseController {
         return new ResponseEntity<>(houses, HttpStatus.OK);
     }
 
+    @GetMapping("/findTop5")
+    public ResponseEntity<Iterable<House>>findHouseTop5(){
+        List<House> houseList=(List<House>)houseService.findTop5();
+        if(houseList.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(houseList,HttpStatus.OK);
+    }
 
 }

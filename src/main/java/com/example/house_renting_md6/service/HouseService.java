@@ -8,4 +8,5 @@ public interface HouseService extends IService<House> {
 
     Iterable<House> findByOwnerId (Long customer_id);
 
+    Iterable<House> findTop5();
 }
