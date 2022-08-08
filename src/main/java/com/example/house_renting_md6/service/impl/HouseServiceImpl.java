@@ -1,11 +1,18 @@
 package com.example.house_renting_md6.service.impl;
 
+import com.example.house_renting_md6.CustomException;
+import com.example.house_renting_md6.model.Category;
 import com.example.house_renting_md6.model.House;
 import com.example.house_renting_md6.repository.HouseRepository;
+import com.example.house_renting_md6.service.CategoryService;
 import com.example.house_renting_md6.service.HouseService;
+import com.example.house_renting_md6.utils.Constants;
+import com.example.house_renting_md6.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
@@ -16,6 +23,8 @@ import java.util.Optional;
 public class HouseServiceImpl implements HouseService {
     @Autowired
     HouseRepository houseRepository;
+    @Autowired
+    CategoryService categoryService;
 
     @Override
     public Page<House> findAll(Pageable pageable) {
@@ -41,6 +50,28 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public House findLastHouse() {
         return houseRepository.findLastHouse();
+    }
+
+    @Override
+    public House save(Long id, House house) throws CustomException {
+        House houseOld = findById(id).orElseThrow(() -> new CustomException("House Not Found"));
+        Category category = categoryService.findById(house.getCategory().getId()).orElseThrow(() -> new CustomException("Category Not Found"));
+        if (houseOld.getStatus() != house.getStatus()
+                && houseOld.getStatus() == Constants.HOUSE_STATUS_HIRED) {
+            throw new CustomException("Nhà đã được thuê. Không thể sửa trạng thái");
+        }
+        houseOld.setName(house.getName());
+        houseOld.setAddress(house.getAddress());
+        houseOld.setBedroom(house.getBedroom());
+        houseOld.setBathroom(house.getBathroom());
+        houseOld.setDescription(house.getDescription());
+        houseOld.setPrice(house.getPrice());
+        houseOld.setCategory(category);
+        houseOld.setStatus(house.getStatus());
+        if (!StringUtils.isNullOrEmpty(house.getAvatarHouse())) {
+            houseOld.setAvatarHouse(house.getAvatarHouse());
+        }
+        return houseRepository.save(houseOld);
     }
 
     @Override

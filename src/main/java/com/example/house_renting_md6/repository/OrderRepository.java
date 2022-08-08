@@ -12,8 +12,11 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAllByHouse(House house);
+
     List<Order> findAllByHouse_Id(Long id);
+
     @Modifying
     @Query(value = "select * from orders where customer_id = :customer_id and status >= 1",nativeQuery = true)
     Iterable<Order> findOderByCustomerId(@Param("customer_id") Long customer_id);
+
 }

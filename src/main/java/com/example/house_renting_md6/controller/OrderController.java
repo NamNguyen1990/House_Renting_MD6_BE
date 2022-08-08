@@ -1,11 +1,8 @@
 package com.example.house_renting_md6.controller;
 
 import com.example.house_renting_md6.CustomException;
-import com.example.house_renting_md6.model.House;
-import com.example.house_renting_md6.model.Order;
+import com.example.house_renting_md6.model.*;
 import com.example.house_renting_md6.model.ResponseBody;
-import com.example.house_renting_md6.model.ResponseMessage;
-import com.example.house_renting_md6.model.User;
 import com.example.house_renting_md6.service.UserService;
 import com.example.house_renting_md6.service.impl.HouseServiceImpl;
 import com.example.house_renting_md6.service.impl.OrderServiceImpl;
@@ -49,6 +46,9 @@ public class OrderController {
         if (house.get().getOwner().getId() == idCustomer) {
             return new ResponseEntity<>(new ResponseBody("0001", "Not rent your house!"), HttpStatus.OK);
         }
+        if (order.getStartTime().compareTo(LocalDate.now())<=0){
+            return new ResponseEntity<>(new ResponseBody("0001", "Check the start time!"), HttpStatus.OK);
+        }
         if (orders.isEmpty()) {
             order.setCustomer(user.get());
             order.setHouse(house.get());
@@ -89,9 +89,8 @@ public class OrderController {
         Optional<Order> order = orderService.findById(idOrder);
         LocalDate localDate = LocalDate.now();
         LocalDate cancelTime = order.get().getStartTime().minusDays(1);
-        if (cancelTime.isEqual(localDate) || cancelTime.isAfter(localDate)) {
-            order.get().setStatus(0);
-            orderService.save(order.get());
+        if ( cancelTime.isAfter(localDate)) {
+            orderService.remove(idOrder);
             return new ResponseEntity<>(new ResponseMessage("Ok"), HttpStatus.OK);
         } else
             return new ResponseEntity<>(new ResponseMessage("Can't cancel! Customers can only cancel the rental 1 day before the start date"), HttpStatus.CONFLICT);
@@ -120,13 +119,28 @@ public class OrderController {
         }
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
-    @GetMapping("/total/{idHouse}")
-    public ResponseEntity<ResponseBody> totalMoneyByMonth(@RequestParam int year,@RequestParam int month,@PathVariable Long idHouse) {
-        try {
-            return new ResponseEntity<>(new ResponseBody("0000", "OK", orderService.totalMoneyByMonth(idHouse,month,year)), HttpStatus.OK);
-        } catch (CustomException e) {
-            return new ResponseEntity<>(new ResponseBody("0001", e.getMessage()), HttpStatus.BAD_REQUEST);
+
+    @PostMapping("/total/{idHouse}")
+    public ResponseEntity<ResponseBody> totalMoneyByMonth(@PathVariable Long idHouse,@RequestBody Time time) {
+        if (orderService.totalMoneyByMonth(idHouse,time).isEmpty()) {
+            return new ResponseEntity<>(new ResponseBody("0001", "No orders!"), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(new ResponseBody("0000", "OK", orderService.totalMoneyByMonth(idHouse,time)), HttpStatus.OK);
         }
+    }
+
+    @GetMapping("/find-by-house/{id}")
+    public ResponseEntity<ResponseBody> findOrderByHouseId(@PathVariable Long id) {
+        List<Order> orders = orderService.findOderByHouseId(id);
+        if (orders.isEmpty()) {
+            return new ResponseEntity<>(new ResponseBody("0001", "House don't have any orders yet!"),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ResponseBody("0000", "OK",orders), HttpStatus.OK);
+    }
+    @GetMapping("/update-order")
+    public ResponseEntity<?> updateStatusOrder(){
+        orderService.updateStatus();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
 
