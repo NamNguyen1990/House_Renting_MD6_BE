@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface HouseRepository extends JpaRepository<House, Long> {
-    @Query(value = "select * from house where status = 1", nativeQuery = true)
+    @Query(value = "select * from house where status > 0", nativeQuery = true)
     Page<House> findAll(Pageable pageable);
 
     @Query(value = "select * from house order by id desc limit 1", nativeQuery = true)
