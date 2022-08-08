@@ -28,6 +28,18 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "limit 3) as abc on abc.house_id = house.id",nativeQuery = true)
     Iterable<House> findTop5();
 
+    @Query(value = "(select * from house where\n" +
+            "address like :address or (price between :startPrice and :endPrice) and bathroom=:bathroom and bedroom=:bedroom and status = 1)\n" +
+            "UNION\n" +
+            "(select h.id , address ,bathroom,bedroom,description,name,price ,h.status,category_id,owner_id,h.image\n" +
+            "from house h join orderr o on h.id = o.house_id\n" +
+            "where\n" +
+            "address like :address and (price between :startPrice and :endPrice) and bathroom=:bathroom and bedroom=:bedroom and h.status = 1\n" +
+            "and h.id not in\n" +
+            "(select h.id from house h join orderr o on h.id = o.house_id where :dateBegin <=o.start_time and o.start_time <= :dateEnd or :dateBegin <=o.end_time and o.end_time<= :dateEnd))\n", nativeQuery = true)
+    Iterable<House>findByAllThing(@Param("address") String address, @Param("startPrice") int startPrice, @Param("endPrice") int endPrice,
+                                  @Param("bathroom") int bathroom, @Param("bedroom") int bedroom, @Param("dateBegin") LocalDate dateBegin, @Param("dateEnd") LocalDate dateEnd);
+
 }
 
 
