@@ -32,8 +32,8 @@ public class OrderServiceImpl implements IOrderService<Order> {
         List<Order> orders = orderRepository.findAllByHouse_Id(id);
         List<Order> orderList = new ArrayList<>();
         for (int i = 0; i < orders.size(); i++) {
-            if (orders.get(i).getStartTime().minusDays(1).getYear() == time.getYear()) {
-                if (orders.get(i).getStartTime().minusDays(1).getMonthValue() == time.getMonth()) {
+            if (orders.get(i).getStartTime().minusDays(1).getYear() == Integer.parseInt(time.getYear())) {
+                if (orders.get(i).getStartTime().minusDays(1).getMonthValue() == Integer.parseInt(time.getMonth())) {
                     orderList.add(orders.get(i));
                 }
             }
