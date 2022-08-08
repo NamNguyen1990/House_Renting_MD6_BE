@@ -1,11 +1,8 @@
 package com.example.house_renting_md6.controller;
 
 import com.example.house_renting_md6.CustomException;
-import com.example.house_renting_md6.model.House;
-import com.example.house_renting_md6.model.Order;
+import com.example.house_renting_md6.model.*;
 import com.example.house_renting_md6.model.ResponseBody;
-import com.example.house_renting_md6.model.ResponseMessage;
-import com.example.house_renting_md6.model.User;
 import com.example.house_renting_md6.service.UserService;
 import com.example.house_renting_md6.service.impl.HouseServiceImpl;
 import com.example.house_renting_md6.service.impl.OrderServiceImpl;
@@ -122,11 +119,11 @@ public class OrderController {
     }
 
     @GetMapping("/total/{idHouse}")
-    public ResponseEntity<ResponseBody> totalMoneyByMonth(@RequestParam int year, @RequestParam int month, @PathVariable Long idHouse) {
-        if (orderService.totalMoneyByMonth(idHouse, month, year).isEmpty()) {
+    public ResponseEntity<ResponseBody> totalMoneyByMonth(@RequestBody Time time, @PathVariable Long idHouse) {
+        if (orderService.totalMoneyByMonth(idHouse,time).isEmpty()) {
             return new ResponseEntity<>(new ResponseBody("0001", "You don't have any orders yet!"), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new ResponseBody("0000", "OK", orderService.totalMoneyByMonth(idHouse, month, year)), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseBody("0000", "OK", orderService.totalMoneyByMonth(idHouse,time)), HttpStatus.OK);
         }
     }
 

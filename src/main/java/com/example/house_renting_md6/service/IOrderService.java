@@ -3,6 +3,7 @@ package com.example.house_renting_md6.service;
 import com.example.house_renting_md6.CustomException;
 import com.example.house_renting_md6.model.House;
 import com.example.house_renting_md6.model.Order;
+import com.example.house_renting_md6.model.Time;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.Optional;
 public interface IOrderService<T> {
     List<Order> findAllByHouse(House house);
 
-    List<Order> totalMoneyByMonth(Long id, int month ,int year) throws CustomException;
+    List<Order> totalMoneyByMonth(Long id, Time time) throws CustomException;
 
     Order save(Order order);
 

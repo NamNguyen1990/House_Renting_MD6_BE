@@ -3,6 +3,7 @@ package com.example.house_renting_md6.service.impl;
 import com.example.house_renting_md6.CustomException;
 import com.example.house_renting_md6.model.House;
 import com.example.house_renting_md6.model.Order;
+import com.example.house_renting_md6.model.Time;
 import com.example.house_renting_md6.repository.OrderRepository;
 import com.example.house_renting_md6.service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +28,12 @@ public class OrderServiceImpl implements IOrderService<Order> {
     }
 
     @Override
-    public List<Order> totalMoneyByMonth(Long id, int month, int year) {
+    public List<Order> totalMoneyByMonth(Long id, Time time) {
         List<Order> orders = orderRepository.findAllByHouse_Id(id);
         List<Order> orderList = new ArrayList<>();
         for (int i = 0; i < orders.size(); i++) {
-            if (orders.get(i).getStartTime().minusDays(1).getYear() == year) {
-                if (orders.get(i).getStartTime().minusDays(1).getMonthValue() == month) {
+            if (orders.get(i).getStartTime().minusDays(1).getYear() == time.getYear()) {
+                if (orders.get(i).getStartTime().minusDays(1).getMonthValue() == time.getMonth()) {
                     orderList.add(orders.get(i));
                 }
             }

@@ -3,6 +3,7 @@ package com.example.house_renting_md6.controller;
 
 import com.example.house_renting_md6.model.House;
 import com.example.house_renting_md6.service.impl.HouseServiceImpl;
+import com.example.house_renting_md6.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,9 +23,13 @@ public class HouseController {
     @Autowired
     HouseServiceImpl houseService;
 
+    @Autowired
+    OrderServiceImpl orderService;
+
     @GetMapping
     public ResponseEntity<Page<House>> findAllHouse(@PageableDefault(value = 9) Pageable pageable) {
         Page<House> houses = houseService.findAll(pageable);
+        orderService.updateStatus();
         return new ResponseEntity<>(houses, HttpStatus.OK);
     }
 
