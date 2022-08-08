@@ -46,7 +46,7 @@ public class OrderController {
         if (house.get().getOwner().getId() == idCustomer) {
             return new ResponseEntity<>(new ResponseBody("0001", "Not rent your house!"), HttpStatus.OK);
         }
-        if (order.getStartTime().compareTo(LocalDate.now())>=0){
+        if (order.getStartTime().compareTo(LocalDate.now())<=0){
             return new ResponseEntity<>(new ResponseBody("0001", "Check the start time!"), HttpStatus.OK);
         }
         if (orders.isEmpty()) {
