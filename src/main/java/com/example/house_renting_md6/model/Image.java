@@ -9,11 +9,6 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "house_id")
-    private House house;
     private String image;
 
     public Image() {
@@ -26,15 +21,6 @@ public class Image {
     public void setId(long id) {
         this.id = id;
     }
-
-    public House getHouse() {
-        return house;
-    }
-
-    public void setHouse(House house) {
-        this.house = house;
-    }
-
     public String getImage() {
         return image;
     }

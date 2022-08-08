@@ -32,8 +32,8 @@ public class House {
     private User owner;
     private int status;
 
-    @OneToMany(mappedBy = "house", fetch = FetchType.LAZY)
-    private Set<Image> images = new LinkedHashSet<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Image> images;
 
     private String avatarHouse;
 

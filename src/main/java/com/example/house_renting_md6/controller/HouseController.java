@@ -9,6 +9,7 @@ import com.example.house_renting_md6.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +30,9 @@ public class HouseController {
     OrderServiceImpl orderService;
 
     @GetMapping
-    public ResponseEntity<Page<House>> findAllHouse(@PageableDefault(value = 9) Pageable pageable) {
+    public ResponseEntity<Page<House>> findAllHouse(@PageableDefault(value = 9, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
         Page<House> houses = houseService.findAll(pageable);
-        orderService.updateStatus();
+        orderService.updateStatus(); // Sửa lại sau này code tự động lên lịch schedule spring
         return new ResponseEntity<>(houses, HttpStatus.OK);
     }
 

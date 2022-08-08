@@ -68,6 +68,7 @@ public class HouseServiceImpl implements HouseService {
         houseOld.setPrice(house.getPrice());
         houseOld.setCategory(category);
         houseOld.setStatus(house.getStatus());
+        houseOld.setImages(house.getImages());
         if (!StringUtils.isNullOrEmpty(house.getAvatarHouse())) {
             houseOld.setAvatarHouse(house.getAvatarHouse());
         }
