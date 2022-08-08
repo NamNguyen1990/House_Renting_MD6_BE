@@ -79,5 +79,10 @@ public class HouseServiceImpl implements HouseService {
         return houseRepository.findByOwnerId(owner_id);
     }
 
+    @Override
+    public Iterable<House> findTop5() {
+        return houseRepository.findTop5();
+    }
+
 
 }

@@ -5,6 +5,7 @@ import com.example.house_renting_md6.CustomException;
 import com.example.house_renting_md6.model.House;
 import com.example.house_renting_md6.model.ResponseBody;
 import com.example.house_renting_md6.service.impl.HouseServiceImpl;
+import com.example.house_renting_md6.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,9 +25,13 @@ public class HouseController {
     @Autowired
     HouseServiceImpl houseService;
 
+    @Autowired
+    OrderServiceImpl orderService;
+
     @GetMapping
     public ResponseEntity<Page<House>> findAllHouse(@PageableDefault(value = 9) Pageable pageable) {
         Page<House> houses = houseService.findAll(pageable);
+        orderService.updateStatus();
         return new ResponseEntity<>(houses, HttpStatus.OK);
     }
 
@@ -77,5 +82,13 @@ public class HouseController {
         return new ResponseEntity<>(houses, HttpStatus.OK);
     }
 
+    @GetMapping("/findTop5")
+    public ResponseEntity<Iterable<House>>findHouseTop5(){
+        List<House> houseList=(List<House>)houseService.findTop5();
+        if(houseList.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(houseList,HttpStatus.OK);
+    }
 
 }
