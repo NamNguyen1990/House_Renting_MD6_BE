@@ -9,6 +9,7 @@ import com.example.house_renting_md6.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +48,7 @@ public class OrderController {
             return new ResponseEntity<>(new ResponseBody("0001", "Not rent your house!"), HttpStatus.OK);
         }
         if (order.getStartTime().compareTo(LocalDate.now())<0){
-            return new ResponseEntity<>(new ResponseBody("0001", "Check the start time!"), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseBody("0001", "start time must be greater than current time!"), HttpStatus.OK);
         }
         if (orders.isEmpty()) {
             order.setCustomer(user.get());
@@ -114,6 +115,16 @@ public class OrderController {
     @GetMapping("/find")
     public ResponseEntity<Iterable<Order>> findOrderByOwnerId(@RequestParam(value = "customer_id") Long customer_id) {
         List<Order> orders = (List<Order>) orderService.findOderByCustomerId(customer_id);
+        if (orders.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+    @GetMapping("/find1")
+    public ResponseEntity<Page<Order>> findOrderByOwnerId1(@PageableDefault(value = 9, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,@RequestParam Long customer_id) {
+        Optional<User> user = userService.findById(customer_id);
+        Page<Order> orders =  orderService.findOderByCustomerId1(user.get(),pageable);
         if (orders.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
