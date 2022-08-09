@@ -22,6 +22,9 @@ public class OrderServiceImpl implements IOrderService<Order> {
     @Autowired
     OrderRepository orderRepository;
 
+    @Autowired
+    HouseServiceImpl houseService;
+
     @Override
     public List<Order> findAllByHouse(House house) {
         return orderRepository.findAllByHouse(house);
@@ -78,12 +81,17 @@ public class OrderServiceImpl implements IOrderService<Order> {
         for (int i = 0; i < orders.size(); i++) {
             if (now.compareTo(orders.get(i).getEndTime()) > 0) {
                 orders.get(i).setStatus(3);
+                Optional<House> house = houseService.findById(orders.get(i).getHouse().getId());
+                house.get().setStatus(1);
                 save(orders.get(i));
             } else {
                 if (now.compareTo(orders.get(i).getStartTime()) >= 0) {
                     orders.get(i).setStatus(2);
+                    Optional<House> house = houseService.findById(orders.get(i).getHouse().getId());
+                    house.get().setStatus(2);
                     save(orders.get(i));
                 }
+//
             }
         }
     }

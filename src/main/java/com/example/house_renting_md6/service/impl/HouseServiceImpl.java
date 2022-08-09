@@ -56,10 +56,13 @@ public class HouseServiceImpl implements HouseService {
     public House save(Long id, House house) throws CustomException {
         House houseOld = findById(id).orElseThrow(() -> new CustomException("House Not Found"));
         Category category = categoryService.findById(house.getCategory().getId()).orElseThrow(() -> new CustomException("Category Not Found"));
-        if (houseOld.getStatus() != house.getStatus()
-                && houseOld.getStatus() == Constants.HOUSE_STATUS_HIRED) {
-            throw new CustomException("Nhà đã được thuê. Không thể sửa trạng thái");
+        if ( houseOld.getStatus() == 2
+                ) {
+            throw new CustomException("The house has been rented. Unable to edit status!");
         }
+        if(house.getImages().size()!=0){
+            houseOld.setImages(house.getImages());
+        }else
         houseOld.setName(house.getName());
         houseOld.setAddress(house.getAddress());
         houseOld.setBedroom(house.getBedroom());
@@ -68,7 +71,6 @@ public class HouseServiceImpl implements HouseService {
         houseOld.setPrice(house.getPrice());
         houseOld.setCategory(category);
         houseOld.setStatus(house.getStatus());
-        houseOld.setImages(house.getImages());
         if (!StringUtils.isNullOrEmpty(house.getAvatarHouse())) {
             houseOld.setAvatarHouse(house.getAvatarHouse());
         }
@@ -84,6 +86,7 @@ public class HouseServiceImpl implements HouseService {
     public Iterable<House> findTop5() {
         return houseRepository.findTop5();
     }
+
 
 
 }
