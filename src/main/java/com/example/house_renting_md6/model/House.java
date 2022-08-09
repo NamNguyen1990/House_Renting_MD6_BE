@@ -22,7 +22,7 @@ public class House {
     @Max(value = 10, message = "Enter at most 10 bedrooms")
     @Min(value = 1, message = "Enter at least 1 bedroom")
     private int bedroom;
-    @Max(value = 3, message = "Enter at most 3 rooms")
+    @Max(value = 10, message = "Enter at most 3 rooms")
     @Min(value = 1, message = "Enter at least 1 bathroom")
     private int bathroom;
     private String description;
