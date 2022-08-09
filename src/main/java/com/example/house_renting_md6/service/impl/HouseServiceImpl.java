@@ -52,6 +52,14 @@ public class HouseServiceImpl implements HouseService {
     public Iterable<House> findTop5() {
         return houseRepository.findTop5();
     }
+    @Override
+    public Iterable<House> findByManyThing(String address, int startPrice, int endPrice, int bathroom, int bedroom, LocalDate dateBegin, LocalDate dateEnd) {
+        System.out.println(address);
+        System.out.println(startPrice);
+        System.out.println(endPrice);
 
+//        return houseRepository.findByManyThing1();
+        return houseRepository.findByManyThing(address, startPrice, endPrice, bathroom, bedroom, dateBegin, dateEnd);
+    }
 
 }
