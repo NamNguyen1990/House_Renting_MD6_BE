@@ -34,5 +34,7 @@ public interface IOrderService<T> {
 
     List<Order> findAll1();
 
-    public Page<Order> findOderByCustomerId1(User user, Pageable pageable);
+    Page<Order> findOderByCustomerId1(User user, Pageable pageable);
+
+    Page<Order> findOderByHouseId1(Long idHouse, Pageable pageable);
 }

@@ -148,6 +148,15 @@ public class OrderController {
         }
         return new ResponseEntity<>(new ResponseBody("0000", "OK",orders), HttpStatus.OK);
     }
+
+    @GetMapping("/find-by-house1/{id}")
+    public ResponseEntity<ResponseBody> findOrderByHouseId1(@PathVariable Long id,@PageableDefault(value = 9, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<Order> orders = orderService.findOderByHouseId1(id,pageable);
+        if (orders.isEmpty()) {
+            return new ResponseEntity<>(new ResponseBody("0001", "House don't have any orders yet!"),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ResponseBody("0000", "OK",orders), HttpStatus.OK);
+    }
     @GetMapping("/update-order")
     public ResponseEntity<?> updateStatusOrder(){
         orderService.updateStatus();

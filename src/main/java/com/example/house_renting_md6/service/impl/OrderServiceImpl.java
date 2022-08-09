@@ -76,6 +76,11 @@ public class OrderServiceImpl implements IOrderService<Order> {
     }
 
     @Override
+    public Page<Order> findOderByHouseId1(Long idHouse, Pageable pageable) {
+        return orderRepository.findAllByHouse_Id(pageable,idHouse);
+    }
+
+    @Override
     public List<Order> findOderByHouseId(Long idHouse) {
         return orderRepository.findAllByHouse_Id(idHouse);
     }

@@ -23,4 +23,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Iterable<Order> findOderByCustomerId(@Param("customer_id") Long customer_id);
 
     Page<Order> findOderByCustomer(User user,Pageable pageable);
+
+    Page<Order> findAllByHouse_Id(Pageable pageable, Long idHouse);
 }
