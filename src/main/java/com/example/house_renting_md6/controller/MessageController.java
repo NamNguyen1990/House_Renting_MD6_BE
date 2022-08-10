@@ -43,7 +43,7 @@ public class MessageController {
 
     @PostMapping("")
     public ResponseEntity<Messagee> add(@RequestBody Messagee message) {
-        message.setContent("đã có người thuê nhà");
+        message.setContent("Already have tenants");
         messageService.save(message);
         return new ResponseEntity<>(HttpStatus.OK);
     }

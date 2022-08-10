@@ -108,7 +108,7 @@ public class OrderController {
             orderService.remove(idOrder);
             return new ResponseEntity<>(new ResponseBody("0000", "Delete successfully!"), HttpStatus.OK);
         } else
-            return new ResponseEntity<>(new ResponseBody("0001", "Can't Delete ! Only cancel the rental 1 day before the start date!"), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseBody("0001", "Can't cancel 1 day in advance"), HttpStatus.OK);
     }
 
     @GetMapping

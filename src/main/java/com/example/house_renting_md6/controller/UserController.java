@@ -132,7 +132,7 @@ public class UserController {
                 userOptional.get().setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
                 return new ResponseEntity<>(new ResponseBody("0000","Successful change!!",userServiceImpl.update(userOptional.get())),HttpStatus.CREATED);
             }else {
-                return new ResponseEntity<>(new ResponseBody("0001","Incorrect The new password is the same as the old password!"),HttpStatus.OK);
+                return new ResponseEntity<>(new ResponseBody("0001", "Invalid old password"),HttpStatus.OK);
             }
 
         }else {
