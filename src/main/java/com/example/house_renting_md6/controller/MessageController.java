@@ -48,10 +48,16 @@ public class MessageController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+//    @GetMapping("/findByUser/{id}")
+//    public ResponseEntity<Iterable<Messagee>> findByUser(@PathVariable Long id){
+//        Optional<User> user = userService.findById(id);
+//        return new ResponseEntity<>(messageService.findAllByUser(user.get()), HttpStatus.OK);
+//    }
+
     @GetMapping("/findByUser/{id}")
     public ResponseEntity<Iterable<Messagee>> findByUser(@PathVariable Long id){
         Optional<User> user = userService.findById(id);
-        return new ResponseEntity<>(messageService.findAllByUser(user.get()), HttpStatus.OK);
+        return new ResponseEntity<>(messageService.findAllByHouse_Owner(user.get()), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

@@ -49,4 +49,9 @@ public class MessageServiceImpl implements MessageService {
     public Iterable<Messagee> findAllByUser(User user) {
         return messageRepository.findAllByUser(user);
     }
+
+    @Override
+    public Iterable<Messagee> findAllByHouse_Owner(User user) {
+        return messageRepository.findAllByHouse_Owner(user);
+    }
 }

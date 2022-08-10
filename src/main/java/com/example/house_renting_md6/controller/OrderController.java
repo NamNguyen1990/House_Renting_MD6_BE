@@ -5,6 +5,7 @@ import com.example.house_renting_md6.model.*;
 import com.example.house_renting_md6.model.ResponseBody;
 import com.example.house_renting_md6.service.UserService;
 import com.example.house_renting_md6.service.impl.HouseServiceImpl;
+import com.example.house_renting_md6.service.impl.MessageServiceImpl;
 import com.example.house_renting_md6.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,6 +37,9 @@ public class OrderController {
     @Autowired
     OrderServiceImpl orderService;
 
+    @Autowired
+    MessageServiceImpl messageService;
+
     @PostMapping("/{idHome}/{idCustomer}")
     public ResponseEntity<?> orderHome(@RequestBody Order order, @PathVariable Long idHome, @PathVariable Long idCustomer, BindingResult bindingResult) {
         Optional<House> house = houseService.findById(idHome);
@@ -54,6 +58,11 @@ public class OrderController {
             order.setCustomer(user.get());
             order.setHouse(house.get());
             order.setStatus(1);
+            Messagee messagee = new Messagee();
+            messagee.setContent("You have new order");
+            messagee.setHouse(house.get());
+            messagee.setUser(house.get().getOwner());
+            messageService.save(messagee);
             order.setTotal(order.getHouse().getPrice() * ChronoUnit.DAYS.between(order.getStartTime(), order.getEndTime()));
             return new ResponseEntity<>(new ResponseBody("0000", "Order Success", orderService.save(order)), HttpStatus.CREATED);
         } else {
@@ -80,6 +89,11 @@ public class OrderController {
             order.setCustomer(user.get());
             order.setHouse(house.get());
             order.setStatus(1);
+            Messagee messagee = new Messagee();
+            messagee.setContent("You have new order");
+            messagee.setHouse(house.get());
+            messagee.setUser(user.get());
+            messageService.save(messagee);
             order.setTotal(order.getHouse().getPrice() * ChronoUnit.DAYS.between(order.getStartTime(), order.getEndTime()));
             return new ResponseEntity<>(new ResponseBody("0000", "Order Success", orderService.save(order)), HttpStatus.CREATED);
         }
