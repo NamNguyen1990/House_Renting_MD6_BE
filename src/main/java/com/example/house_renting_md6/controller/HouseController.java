@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,6 +92,19 @@ public class HouseController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(houseList,HttpStatus.OK);
+    }
+
+
+    @GetMapping("/searchByAll")
+    public ResponseEntity<Iterable<House>> findByAll(@RequestParam(value = "address",defaultValue = "%",required = false) String address, @RequestParam(value = "startPrice",defaultValue = "0",required = false) int start, @RequestParam(value = "endPrice",defaultValue = "999999",required = false) int end,
+                                                     @RequestParam(value = "bath",defaultValue = "0",required = false) int bathroom, @RequestParam(value = "bed",defaultValue = "0",required = false) int bedroom,
+                                                     @RequestParam(value = "dateBegin") String dateBegin, @RequestParam(value = "dateEnd") String dateEnd) {
+        if ((dateBegin.equals("") && dateEnd.equals(""))) {
+            dateBegin = "1900-01-01";
+            dateEnd = String.valueOf(LocalDate.now());
+        }
+        Iterable<House> houses = houseService.findByManyThing(address , start, end, bathroom, bedroom, LocalDate.parse(dateBegin), LocalDate.parse(dateEnd));
+        return new ResponseEntity<>(houses, HttpStatus.OK);
     }
 
 }
