@@ -86,15 +86,15 @@ public class OrderController {
     }
 
     @DeleteMapping("/{idOrder}")
-    public ResponseEntity<?> cancelRent(@PathVariable Long idOrder) {
-        Optional<Order> order = orderService.findById(idOrder);
+    public ResponseEntity<ResponseBody> cancelRent(@PathVariable Long idOrder) {
+        Optional<Order> order = orderService.findById(idOrder) ;
         LocalDate localDate = LocalDate.now();
         LocalDate cancelTime = order.get().getStartTime().minusDays(1);
         if ( cancelTime.isAfter(localDate)) {
             orderService.remove(idOrder);
-            return new ResponseEntity<>(new ResponseMessage("Ok"), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseBody("0000", "Delete successfully!"), HttpStatus.OK);
         } else
-            return new ResponseEntity<>(new ResponseMessage("Can't cancel! Customers can only cancel the rental 1 day before the start date"), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ResponseBody("0001", "Can't Delete ! Only cancel the rental 1 day before the start date!"), HttpStatus.OK);
     }
 
     @GetMapping
