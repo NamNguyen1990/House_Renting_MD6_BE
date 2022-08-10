@@ -11,4 +11,6 @@ import javax.mail.Message;
 @Repository
 public interface MessageRepository extends JpaRepository<Messagee, Long> {
     Iterable<Messagee> findAllByUser (User user);
+    Iterable<Messagee> findAllByHouse_Owner (User user);
+
 }

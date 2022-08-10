@@ -12,4 +12,6 @@ public interface MessageService extends IService<Messagee>{
     Iterable<Messagee> findAll();
     //tìm thông báo theo nhà
     Iterable<Messagee> findAllByUser (User user);
+
+    Iterable<Messagee> findAllByHouse_Owner (User user);
 }
