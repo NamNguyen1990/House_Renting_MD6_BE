@@ -102,10 +102,10 @@ public class UserController {
     }
 
     @PutMapping("/users/update-profile/{id}")
-    public ResponseEntity<User> updateUserProfile(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<ResponseBody> updateUserProfile(@PathVariable Long id, @RequestBody User user) {
         Optional<User> userOptional = this.userService.findById(id);
         if (!userOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBody("0001","Account does not exist!"),HttpStatus.OK);
         }
         user.setId(userOptional.get().getId());
         user.setUsername(userOptional.get().getUsername());
@@ -114,19 +114,30 @@ public class UserController {
         user.setPassword(userOptional.get().getPassword());
         user.setConfirmPassword(userOptional.get().getConfirmPassword());
         userServiceImpl.update(user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseBody("0000","Successful change!",user), HttpStatus.CREATED);
     }
 
     @PutMapping("/users/update-password/{id}")
-    public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<ResponseBody> updatePassword(@PathVariable Long id, @RequestBody ChangeUser user) {
         Optional<User> userOptional = userService.findById(id);
         if (!userOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ResponseBody("0001","Account does not exist!"),HttpStatus.OK);
         }
-        userOptional.get().setPassword(passwordEncoder.encode(user.getPassword()));
-        userOptional.get().setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
-        userServiceImpl.update(userOptional.get());
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (!user.getPassword().equals(user.getConfirmPassword())){
+            return new ResponseEntity<>(new ResponseBody("0001","Incorrect Confirm Password!"),HttpStatus.OK);
+        }
+        if (passwordEncoder.matches(user.getOldPassword(),userOptional.get().getPassword())){
+            if (!passwordEncoder.matches(user.getPassword(),userOptional.get().getPassword())){
+                userOptional.get().setPassword(passwordEncoder.encode(user.getPassword()));
+                userOptional.get().setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
+                return new ResponseEntity<>(new ResponseBody("0000","Successful change!!",userServiceImpl.update(userOptional.get())),HttpStatus.CREATED);
+            }else {
+                return new ResponseEntity<>(new ResponseBody("0001","Incorrect The new password is the same as the old password!"),HttpStatus.OK);
+            }
+
+        }else {
+            return new ResponseEntity<>(new ResponseBody("0001","Incorrect Password!"),HttpStatus.OK);
+        }
     }
 
 
