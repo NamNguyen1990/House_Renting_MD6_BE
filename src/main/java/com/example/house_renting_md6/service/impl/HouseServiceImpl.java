@@ -93,10 +93,6 @@ public class HouseServiceImpl implements HouseService {
     public Iterable<House> findTop5() {
         return houseRepository.findTop5();
     }
-    @Override
-    public Page<House> findByManyThing(String address, int startPrice, int endPrice, int bathroom, int bedroom, String dateBegin, String dateEnd, Pageable pageable) {
-        return houseRepository.findByManyThing(address,startPrice,endPrice,bathroom,bedroom,dateBegin,dateEnd, pageable);
-    }
 
     public ArrayList<House> findByQ(String address, int startPrice, int endPrice, int bathroom, int bedroom, String dateBegin, String dateEnd) {
         ArrayList<House> housesResult = new ArrayList<>();

@@ -95,22 +95,8 @@ public class HouseController {
         return new ResponseEntity<>(houseList, HttpStatus.OK);
     }
 
-
     @GetMapping("/searchByAll")
-    public ResponseEntity<Page<House>> findByAll(@RequestParam(value = "address", defaultValue = "%", required = false) String address, @RequestParam(value = "startPrice", defaultValue = "0", required = false) int start, @RequestParam(value = "endPrice", defaultValue = "999999", required = false) int end,
-                                                 @RequestParam(value = "bath", defaultValue = "0", required = false) int bathroom, @RequestParam(value = "bed", defaultValue = "0", required = false) int bedroom,
-                                                 @RequestParam(value = "dateBegin") String dateBegin, @RequestParam(value = "dateEnd") String dateEnd,
-                                                 @PageableDefault(value = 9, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
-        if ((dateBegin.equals("") && dateEnd.equals(""))) {
-            dateBegin = "1900-01-01";
-            dateEnd = "1900-01-02";
-        }
-        Page<House> houses = houseService.findByManyThing(address, start, end, bathroom, bedroom, dateBegin, dateEnd, pageable);
-        return new ResponseEntity<>(houses, HttpStatus.OK);
-    }
-
-    @GetMapping("/searchByAll1")
-    public ResponseEntity<ArrayList<House>> findByAll1(@RequestParam(value = "address", defaultValue = "%", required = false) String address, @RequestParam(value = "startPrice", defaultValue = "0", required = false) int start, @RequestParam(value = "endPrice", defaultValue = "999999", required = false) int end,
+    public ResponseEntity<ArrayList<House>> findByAll(@RequestParam(value = "address", defaultValue = "%", required = false) String address, @RequestParam(value = "startPrice", defaultValue = "0", required = false) int start, @RequestParam(value = "endPrice", defaultValue = "999999", required = false) int end,
                                                        @RequestParam(value = "bath", defaultValue = "0", required = false) int bathroom, @RequestParam(value = "bed", defaultValue = "0", required = false) int bedroom,
                                                        @RequestParam(value = "dateBegin") String dateBegin, @RequestParam(value = "dateEnd") String dateEnd,
                                                        @PageableDefault(value = 9, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {

@@ -34,6 +34,19 @@ public interface HouseRepository extends JpaRepository<House, Long> {
     Iterable<House> findTop5();
 
 
+    @Query(value = "(select * from house h join houserenting_md6.orders o on h.id = o.house_id where\n" +
+            "        address like :address and (price between :startPrice and :endPrice) and bathroom >= :bathroom and bedroom >= :bedroom and h.status = 1\n" +
+            "                      and h.id not in (select h.id from house h join houserenting_md6.orders o on h.id = o.house_id\n" +
+            "                                       where (o.start_time  between :dateBegin and :dateEnd) or (o.end_time  between :dateBegin and :dateEnd))\n" +
+            "UNION\n" +
+            "select h.id , address ,bathroom,bedroom,description,h.name,price ,h.status,category_id,owner_id,h.avatar_house\n" +
+            "from\n" +
+            "    house h join houserenting_md6.orders o on h.id = o.house_id\n" +
+            "where\n" +
+            "    address like :address and (price between :startPrice and :endPrice) and bathroom>=:bathroom\n" +
+            "   and bedroom>=:bedroom and h.status = 1\n" +
+            "   and h.id not in (select h.id from house h join houserenting_md6.orders o on h.id = o.house_id\n" +
+            "                                 where (o.start_time  between :dateBegin and :dateEnd) or (o.end_time  between :dateBegin and :dateEnd)))\n", nativeQuery = true)
     Page<House> findByManyThing(@Param("address") String address, @Param("startPrice") int startPrice, @Param("endPrice") int endPrice,
                                 @Param("bathroom") int bathroom, @Param("bedroom") int bedroom, @Param("dateBegin") String dateBegin, @Param("dateEnd") String dateEnd, Pageable pageable);
 

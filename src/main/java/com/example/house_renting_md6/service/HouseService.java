@@ -16,5 +16,5 @@ public interface HouseService extends IService<House> {
 
     Iterable<House> findTop5();
 
-    Iterable<House>findByManyThing(String address, int start, int end, int bathroom, int bedroom, String dateBegin, String dateEnd, Pageable pageable);
+//    Iterable<House>findByManyThing(String address, int start, int end, int bathroom, int bedroom, String dateBegin, String dateEnd, Pageable pageable);
 }
