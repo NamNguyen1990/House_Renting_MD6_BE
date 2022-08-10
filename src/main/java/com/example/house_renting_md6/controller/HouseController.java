@@ -1,11 +1,15 @@
 package com.example.house_renting_md6.controller;
 
 
+import com.example.house_renting_md6.CustomException;
 import com.example.house_renting_md6.model.House;
+import com.example.house_renting_md6.model.ResponseBody;
 import com.example.house_renting_md6.service.impl.HouseServiceImpl;
+import com.example.house_renting_md6.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +28,13 @@ public class HouseController {
     @Autowired
     HouseServiceImpl houseService;
 
+    @Autowired
+    OrderServiceImpl orderService;
+
     @GetMapping
-    public ResponseEntity<Page<House>> findAllHouse(@PageableDefault(value = 9) Pageable pageable) {
+    public ResponseEntity<Page<House>> findAllHouse(@PageableDefault(value = 9, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
         Page<House> houses = houseService.findAll(pageable);
+        orderService.updateStatus(); // Sửa lại sau này code tự động lên lịch schedule spring
         return new ResponseEntity<>(houses, HttpStatus.OK);
     }
 
@@ -48,14 +56,12 @@ public class HouseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<House> updateHouse(@PathVariable Long id, @RequestBody House house) {
-        Optional<House> houseOptional = houseService.findById(id);
-        if (!houseOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseBody> updateHouse(@PathVariable Long id, @RequestBody House house) {
+        try {
+            return new ResponseEntity<>(new ResponseBody("00", "Success", houseService.save(id, house)), HttpStatus.OK);
+        } catch (CustomException e) {
+            return new ResponseEntity<>(new ResponseBody("99", e.getMessage()), HttpStatus.OK);
         }
-        house.setId(houseOptional.get().getId());
-        houseService.save(house);
-        return new ResponseEntity<>(house, HttpStatus.OK);
     }
 
 //trong backlog không có xóa

@@ -9,8 +9,8 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 
+
 public interface HouseRepository extends JpaRepository<House, Long> {
-    @Query(value = "select * from house where status > 0", nativeQuery = true)
     Page<House> findAll(Pageable pageable);
 
     @Query(value = "select * from house order by id desc limit 1", nativeQuery = true)
@@ -41,8 +41,4 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "       where :dateBegin <=o.start_time and o.start_time <= :dateEnd or :dateBegin <=o.end_time and o.end_time<= :dateEnd))\n", nativeQuery = true)
     Iterable<House> findByManyThing(@Param("address") String address, @Param("startPrice") int startPrice, @Param("endPrice") int endPrice,
                                     @Param("bathroom") int bathroom, @Param("bedroom") int bedroom, @Param("dateBegin") LocalDate dateBegin, @Param("dateEnd") LocalDate dateEnd);
-
-
-
-
 }

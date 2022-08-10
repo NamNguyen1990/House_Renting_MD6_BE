@@ -22,6 +22,8 @@ public class Comment {
 
     private LocalDateTime createAt;
 
+    private String rate;
+
     public Comment() {
     }
 
@@ -63,5 +65,13 @@ public class Comment {
 
     public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
+    }
+
+    public String getRate() {
+        return rate;
+    }
+
+    public void setRate(String rate) {
+        this.rate = rate;
     }
 }
