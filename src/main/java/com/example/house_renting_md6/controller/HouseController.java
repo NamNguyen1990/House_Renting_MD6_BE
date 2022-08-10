@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +65,7 @@ public class HouseController {
         }
     }
 
-//trong backlog không có xóa
+    //trong backlog không có xóa
     @DeleteMapping("/{id}")
     public ResponseEntity<House> deleteHouse(@PathVariable Long id) {
         Optional<House> houseOptional = houseService.findById(id);
@@ -76,7 +77,7 @@ public class HouseController {
         return new ResponseEntity<>(houseOptional.get(), HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/find-by-ownerId")  // Tìm theo id User đăng nhập để ra số house đã đăng của id đó!
+    @GetMapping("/find-by-ownerId")  // Tìm theo id AppUser đăng nhập để ra số house đã đăng của id đó!
     public ResponseEntity<Iterable<House>> findHouseByOwnerId(@RequestParam(value = "owner_id") Long owner_id) {
         List<House> houses = (List<House>) houseService.findByOwnerId(owner_id);
         if (houses.isEmpty()) {
@@ -86,25 +87,38 @@ public class HouseController {
     }
 
     @GetMapping("/findTop5")
-    public ResponseEntity<Iterable<House>>findHouseTop5(){
-        List<House> houseList=(List<House>)houseService.findTop5();
-        if(houseList.isEmpty()){
+    public ResponseEntity<Iterable<House>> findHouseTop5() {
+        List<House> houseList = (List<House>) houseService.findTop5();
+        if (houseList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(houseList,HttpStatus.OK);
+        return new ResponseEntity<>(houseList, HttpStatus.OK);
     }
 
 
     @GetMapping("/searchByAll")
-    public ResponseEntity<Iterable<House>> findByAll(@RequestParam(value = "address",defaultValue = "%",required = false) String address, @RequestParam(value = "startPrice",defaultValue = "0",required = false) int start, @RequestParam(value = "endPrice",defaultValue = "999999",required = false) int end,
-                                                     @RequestParam(value = "bath",defaultValue = "0",required = false) int bathroom, @RequestParam(value = "bed",defaultValue = "0",required = false) int bedroom,
-                                                     @RequestParam(value = "dateBegin") String dateBegin, @RequestParam(value = "dateEnd") String dateEnd) {
+    public ResponseEntity<Page<House>> findByAll(@RequestParam(value = "address", defaultValue = "%", required = false) String address, @RequestParam(value = "startPrice", defaultValue = "0", required = false) int start, @RequestParam(value = "endPrice", defaultValue = "999999", required = false) int end,
+                                                 @RequestParam(value = "bath", defaultValue = "0", required = false) int bathroom, @RequestParam(value = "bed", defaultValue = "0", required = false) int bedroom,
+                                                 @RequestParam(value = "dateBegin") String dateBegin, @RequestParam(value = "dateEnd") String dateEnd,
+                                                 @PageableDefault(value = 9, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
         if ((dateBegin.equals("") && dateEnd.equals(""))) {
             dateBegin = "1900-01-01";
-            dateEnd = String.valueOf(LocalDate.now());
+            dateEnd = "1900-01-02";
         }
-        Iterable<House> houses = houseService.findByManyThing(address , start, end, bathroom, bedroom, LocalDate.parse(dateBegin), LocalDate.parse(dateEnd));
+        Page<House> houses = houseService.findByManyThing(address, start, end, bathroom, bedroom, dateBegin, dateEnd, pageable);
         return new ResponseEntity<>(houses, HttpStatus.OK);
     }
 
+    @GetMapping("/searchByAll1")
+    public ResponseEntity<ArrayList<House>> findByAll1(@RequestParam(value = "address", defaultValue = "%", required = false) String address, @RequestParam(value = "startPrice", defaultValue = "0", required = false) int start, @RequestParam(value = "endPrice", defaultValue = "999999", required = false) int end,
+                                                       @RequestParam(value = "bath", defaultValue = "0", required = false) int bathroom, @RequestParam(value = "bed", defaultValue = "0", required = false) int bedroom,
+                                                       @RequestParam(value = "dateBegin") String dateBegin, @RequestParam(value = "dateEnd") String dateEnd,
+                                                       @PageableDefault(value = 9, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        if ((dateBegin.equals("") && dateEnd.equals(""))) {
+            dateBegin = "1900-01-01";
+            dateEnd = "1900-01-02";
+        }
+        ArrayList<House> houses = houseService.findByQ(address, start, end, bathroom, bedroom, dateBegin, dateEnd);
+        return new ResponseEntity<>(houses, HttpStatus.OK);
+    }
 }

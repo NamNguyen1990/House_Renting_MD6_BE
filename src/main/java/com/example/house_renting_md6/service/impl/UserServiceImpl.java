@@ -1,8 +1,8 @@
 package com.example.house_renting_md6.service.impl;
 
 import com.example.house_renting_md6.CustomException;
+import com.example.house_renting_md6.model.AppUser;
 import com.example.house_renting_md6.model.Role;
-import com.example.house_renting_md6.model.User;
 import com.example.house_renting_md6.model.UserPrinciple;
 import com.example.house_renting_md6.repository.UserRepository;
 import com.example.house_renting_md6.service.RoleService;
@@ -34,62 +34,62 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
+        AppUser appUser = userRepository.findByUsername(username);
+        if (appUser == null) {
             throw new UsernameNotFoundException(username);
         }
-        if (this.checkLogin(user)) {
-            return UserPrinciple.build(user);
+        if (this.checkLogin(appUser)) {
+            return UserPrinciple.build(appUser);
         }
         boolean enable = false;
         boolean accountNonExpired = false;
         boolean credentialsNonExpired = false;
         boolean accountNonLocked = false;
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),
-                user.getPassword(), enable, accountNonExpired, credentialsNonExpired,
+        return new org.springframework.security.core.userdetails.User(appUser.getUsername(),
+                appUser.getPassword(), enable, accountNonExpired, credentialsNonExpired,
                 accountNonLocked, null);
     }
 
 
     @Override
-    public User save(User user) throws CustomException {
-        if (!isCorrectConfirmPassword(user)) {
+    public AppUser save(AppUser appUser) throws CustomException {
+        if (!isCorrectConfirmPassword(appUser)) {
             throw new CustomException("Password incorrect, please try again!");
         }
-        if (existsByUsername(user.getUsername())) {
+        if (existsByUsername(appUser.getUsername())) {
             throw new CustomException("Username already in use!");
         }
-        if (existsByPhone(user.getPhone())) {
+        if (existsByPhone(appUser.getPhone())) {
             throw new CustomException("Phone number registered!");
         }
         Role role;
         Set<Role> roles = new HashSet<>();
-        if (user.getRoles() != null) {
+        if (appUser.getRoles() != null) {
             role = roleService.findByName(Constants.ROLE_ADMIN);
         } else {
             role = roleService.findByName(Constants.ROLE_USER);
         }
         roles.add(role);
-        user.setRoles(roles);
-        user.setAvatar("https://firebasestorage.googleapis.com/v0/b/pro1-1ab26.appspot.com/o/RoomsImages%2F1659601471359?alt=media&token=183c6997-41ed-4b1f-941f-2e91a7242a9d");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
-        return userRepository.save(user);
+        appUser.setRoles(roles);
+        appUser.setAvatar("https://firebasestorage.googleapis.com/v0/b/pro1-1ab26.appspot.com/o/RoomsImages%2F1659601471359?alt=media&token=183c6997-41ed-4b1f-941f-2e91a7242a9d");
+        appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+        appUser.setConfirmPassword(passwordEncoder.encode(appUser.getConfirmPassword()));
+        return userRepository.save(appUser);
     }
 
     @Override
-    public Iterable<User> findAll() {
+    public Iterable<AppUser> findAll() {
         return userRepository.findAll();
     }
 
     @Override
-    public User findByUsername(String username) {
+    public AppUser findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
     @Override
-    public User getCurrentUser() {
-        User user;
+    public AppUser getCurrentUser() {
+        AppUser appUser;
         String userName;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -98,18 +98,18 @@ public class UserServiceImpl implements UserService {
         } else {
             userName = principal.toString();
         }
-        user = this.findByUsername(userName);
-        return user;
+        appUser = this.findByUsername(userName);
+        return appUser;
     }
 
     @Override
-    public Optional<User> findById(Long id) {
+    public Optional<AppUser> findById(Long id) {
         return userRepository.findById(id);
     }
 
     @Override
     public UserDetails loadUserById(Long id) {
-        Optional<User> user = userRepository.findById(id);
+        Optional<AppUser> user = userRepository.findById(id);
         if (!user.isPresent()) {
             throw new NullPointerException();
         }
@@ -117,13 +117,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkLogin(User user) {
-        Iterable<User> users = this.findAll();
+    public boolean checkLogin(AppUser appUser) {
+        Iterable<AppUser> users = this.findAll();
         boolean isCorrectUser = false;
-        for (User currentUser : users) {
-            if (currentUser.getUsername().equals(user.getUsername())
-                    && user.getPassword().equals(currentUser.getPassword()) &&
-                    currentUser.isEnabled()) {
+        for (AppUser currentAppUser : users) {
+            if (currentAppUser.getUsername().equals(appUser.getUsername())
+                    && appUser.getPassword().equals(currentAppUser.getPassword()) &&
+                    currentAppUser.isEnabled()) {
                 isCorrectUser = true;
             }
         }
@@ -131,11 +131,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isRegister(User user) {
+    public boolean isRegister(AppUser appUser) {
         boolean isRegister = false;
-        Iterable<User> users = this.findAll();
-        for (User currentUser : users) {
-            if (user.getUsername().equals(currentUser.getUsername())) {
+        Iterable<AppUser> users = this.findAll();
+        for (AppUser currentAppUser : users) {
+            if (appUser.getUsername().equals(currentAppUser.getUsername())) {
                 isRegister = true;
                 break;
             }
@@ -144,8 +144,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isCorrectConfirmPassword(User user) {
-        return user.getPassword().equals(user.getConfirmPassword());
+    public boolean isCorrectConfirmPassword(AppUser appUser) {
+        return appUser.getPassword().equals(appUser.getConfirmPassword());
     }
 
     @Override
@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByPhone(phone);
     }
 
-    public User update(User user) {
-        return userRepository.save(user);
+    public AppUser update(AppUser appUser) {
+        return userRepository.save(appUser);
     }
 }

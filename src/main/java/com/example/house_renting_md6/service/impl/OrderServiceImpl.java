@@ -1,10 +1,9 @@
 package com.example.house_renting_md6.service.impl;
 
-import com.example.house_renting_md6.CustomException;
+import com.example.house_renting_md6.model.AppUser;
 import com.example.house_renting_md6.model.House;
 import com.example.house_renting_md6.model.Order;
 import com.example.house_renting_md6.model.Time;
-import com.example.house_renting_md6.model.User;
 import com.example.house_renting_md6.repository.OrderRepository;
 import com.example.house_renting_md6.service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,8 +70,8 @@ public class OrderServiceImpl implements IOrderService<Order> {
     }
 
     @Override
-    public Page<Order> findOderByCustomerId1(User user, Pageable pageable) {
-        return orderRepository.findOderByCustomer(user,pageable);
+    public Page<Order> findOderByCustomerId1(AppUser appUser, Pageable pageable) {
+        return orderRepository.findOderByCustomer(appUser,pageable);
     }
 
     @Override

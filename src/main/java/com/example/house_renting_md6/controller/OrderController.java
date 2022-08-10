@@ -1,6 +1,5 @@
 package com.example.house_renting_md6.controller;
 
-import com.example.house_renting_md6.CustomException;
 import com.example.house_renting_md6.model.*;
 import com.example.house_renting_md6.model.ResponseBody;
 import com.example.house_renting_md6.service.UserService;
@@ -14,13 +13,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +34,7 @@ public class OrderController {
     @PostMapping("/{idHome}/{idCustomer}")
     public ResponseEntity<?> orderHome(@RequestBody Order order, @PathVariable Long idHome, @PathVariable Long idCustomer, BindingResult bindingResult) {
         Optional<House> house = houseService.findById(idHome);
-        Optional<User> user = userService.findById(idCustomer);
+        Optional<AppUser> user = userService.findById(idCustomer);
         List<Order> orders = orderService.findAllByHouse(house.get());
         if (bindingResult.hasFieldErrors()) {
             return new ResponseEntity<>(new ResponseBody("0001", "Invalid input parameter!"), HttpStatus.BAD_REQUEST);
@@ -123,7 +118,7 @@ public class OrderController {
 
     @GetMapping("/find1")
     public ResponseEntity<Page<Order>> findOrderByOwnerId1(@PageableDefault(value = 9, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,@RequestParam Long customer_id) {
-        Optional<User> user = userService.findById(customer_id);
+        Optional<AppUser> user = userService.findById(customer_id);
         Page<Order> orders =  orderService.findOderByCustomerId1(user.get(),pageable);
         if (orders.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

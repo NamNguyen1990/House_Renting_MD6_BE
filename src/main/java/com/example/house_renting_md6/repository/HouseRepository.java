@@ -1,13 +1,16 @@
 package com.example.house_renting_md6.repository;
 
 import com.example.house_renting_md6.model.House;
+import com.example.house_renting_md6.model.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 
 public interface HouseRepository extends JpaRepository<House, Long> {
@@ -31,14 +34,11 @@ public interface HouseRepository extends JpaRepository<House, Long> {
     Iterable<House> findTop5();
 
 
-    @Query(value = "(select h.id , address ,bathroom,bedroom,description,h.name,price ,h.status,category_id,owner_id,h.avatar_house\n" +
-            "from\n" +
-            "    house h join houserenting_md6.orders o on h.id = o.house_id\n" +
-            "where\n" +
-            "    address like :address and (price between :startPrice and :endPrice) and bathroom>=:bathroom\n" +
-            "   and bedroom>=:bedroom and h.status = 1\n" +
-            "   and h.id not in (select h.id from house h join houserenting_md6.orders o on h.id = o.house_id\n" +
-            "       where :dateBegin <=o.start_time and o.start_time <= :dateEnd or :dateBegin <=o.end_time and o.end_time<= :dateEnd))\n", nativeQuery = true)
-    Iterable<House> findByManyThing(@Param("address") String address, @Param("startPrice") int startPrice, @Param("endPrice") int endPrice,
-                                    @Param("bathroom") int bathroom, @Param("bedroom") int bedroom, @Param("dateBegin") LocalDate dateBegin, @Param("dateEnd") LocalDate dateEnd);
+    Page<House> findByManyThing(@Param("address") String address, @Param("startPrice") int startPrice, @Param("endPrice") int endPrice,
+                                @Param("bathroom") int bathroom, @Param("bedroom") int bedroom, @Param("dateBegin") String dateBegin, @Param("dateEnd") String dateEnd, Pageable pageable);
+
+    @Query(value = "(select * from house h where " +
+            "address like :address and (price between :startPrice and :endPrice) and bathroom >= :bathroom and bedroom >= :bedroom and h.status = 1)", nativeQuery = true)
+    ArrayList<House> findByManyThing1(@Param("address") String address, @Param("startPrice") int startPrice, @Param("endPrice") int endPrice,
+                                 @Param("bathroom") int bathroom, @Param("bedroom") int bedroom);
 }

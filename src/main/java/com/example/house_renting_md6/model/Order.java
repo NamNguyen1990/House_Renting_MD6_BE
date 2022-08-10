@@ -1,13 +1,11 @@
 package com.example.house_renting_md6.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "orders")
@@ -19,7 +17,7 @@ public class Order {
     private House house;
 
     @ManyToOne
-    private User customer;
+    private AppUser customer;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startTime;
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -58,11 +56,11 @@ public class Order {
         this.house = house;
     }
 
-    public User getCustomer() {
+    public AppUser getCustomer() {
         return customer;
     }
 
-    public void setCustomer(User customer) {
+    public void setCustomer(AppUser customer) {
         this.customer = customer;
     }
 

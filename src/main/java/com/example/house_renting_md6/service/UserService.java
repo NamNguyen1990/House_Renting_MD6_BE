@@ -1,30 +1,30 @@
 package com.example.house_renting_md6.service;
 
 import com.example.house_renting_md6.CustomException;
-import com.example.house_renting_md6.model.User;
+import com.example.house_renting_md6.model.AppUser;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Optional;
 
 public interface UserService extends UserDetailsService {
-    User save(User user) throws CustomException;
+    AppUser save(AppUser appUser) throws CustomException;
 
-    Iterable<User> findAll();
+    Iterable<AppUser> findAll();
 
-    User findByUsername(String username);
+    AppUser findByUsername(String username);
 
-    User getCurrentUser();
+    AppUser getCurrentUser();
 
-    Optional<User> findById(Long id);
+    Optional<AppUser> findById(Long id);
 
     UserDetails loadUserById(Long id);
 
-    boolean checkLogin(User user);
+    boolean checkLogin(AppUser appUser);
 
-    boolean isRegister(User user);
+    boolean isRegister(AppUser appUser);
 
-    boolean isCorrectConfirmPassword(User user);
+    boolean isCorrectConfirmPassword(AppUser appUser);
 
     boolean existsByUsername(String username);
 

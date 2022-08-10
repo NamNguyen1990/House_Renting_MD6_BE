@@ -4,7 +4,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 
@@ -29,7 +28,7 @@ public class House {
     @Min(value = 1, message = "The lowest price is 1")
     private Long price;
     @ManyToOne
-    private User owner;
+    private AppUser owner;
     private int status;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -104,11 +103,11 @@ public class House {
         this.price = price;
     }
 
-    public User getOwner() {
+    public AppUser getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(AppUser owner) {
         this.owner = owner;
     }
 

@@ -3,7 +3,9 @@ package com.example.house_renting_md6.service.impl;
 import com.example.house_renting_md6.CustomException;
 import com.example.house_renting_md6.model.Category;
 import com.example.house_renting_md6.model.House;
+import com.example.house_renting_md6.model.Order;
 import com.example.house_renting_md6.repository.HouseRepository;
+import com.example.house_renting_md6.repository.OrderRepository;
 import com.example.house_renting_md6.service.CategoryService;
 import com.example.house_renting_md6.service.HouseService;
 import com.example.house_renting_md6.utils.Constants;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -25,6 +29,9 @@ public class HouseServiceImpl implements HouseService {
     HouseRepository houseRepository;
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    OrderRepository orderRepository;
 
     @Override
     public Page<House> findAll(Pageable pageable) {
@@ -87,10 +94,26 @@ public class HouseServiceImpl implements HouseService {
         return houseRepository.findTop5();
     }
     @Override
-    public Iterable<House> findByManyThing(String address, int startPrice, int endPrice, int bathroom, int bedroom, LocalDate dateBegin, LocalDate dateEnd) {
-
-        return houseRepository.findByManyThing(address,startPrice,endPrice,bathroom,bedroom,dateBegin,dateEnd);
+    public Page<House> findByManyThing(String address, int startPrice, int endPrice, int bathroom, int bedroom, String dateBegin, String dateEnd, Pageable pageable) {
+        return houseRepository.findByManyThing(address,startPrice,endPrice,bathroom,bedroom,dateBegin,dateEnd, pageable);
     }
 
-
+    public ArrayList<House> findByQ(String address, int startPrice, int endPrice, int bathroom, int bedroom, String dateBegin, String dateEnd) {
+        ArrayList<House> housesResult = new ArrayList<>();
+        ArrayList<House> houses = houseRepository.findByManyThing1(address, startPrice,endPrice,bathroom, bedroom);
+        ArrayList<Order> orders = orderRepository.findOrderByManyThing(dateBegin, dateEnd);
+        for (House h : houses) {
+            boolean check = true;
+            for (Order o : orders) {
+                if (Objects.equals(o.getHouse().getId(), h.getId())) {
+                    check = false;
+                    break;
+                }
+            }
+            if (check) {
+                housesResult.add(h);
+            }
+        }
+        return housesResult;
+    }
 }
