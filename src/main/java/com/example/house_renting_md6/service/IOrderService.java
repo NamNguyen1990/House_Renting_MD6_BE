@@ -1,7 +1,7 @@
 package com.example.house_renting_md6.service;
 
 import com.example.house_renting_md6.CustomException;
-import com.example.house_renting_md6.model.AppUser;
+import com.example.house_renting_md6.model.User;
 import com.example.house_renting_md6.model.House;
 import com.example.house_renting_md6.model.Order;
 import com.example.house_renting_md6.model.Time;
@@ -34,7 +34,7 @@ public interface IOrderService<T> {
 
     List<Order> findAll1();
 
-    Page<Order> findOderByCustomerId1(AppUser appUser, Pageable pageable);
+    Page<Order> findOderByCustomerId1(User user, Pageable pageable);
 
     Page<Order> findOderByHouseId1(Long idHouse, Pageable pageable);
 }

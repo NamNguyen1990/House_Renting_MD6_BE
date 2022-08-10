@@ -16,7 +16,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private AppUser appUser;
+    private User user;
 
     private String description;
 
@@ -43,12 +43,12 @@ public class Comment {
         this.house = house;
     }
 
-    public AppUser getUser() {
-        return appUser;
+    public User getUser() {
+        return user;
     }
 
-    public void setUser(AppUser appUser) {
-        this.appUser = appUser;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getDescription() {

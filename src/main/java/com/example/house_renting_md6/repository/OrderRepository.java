@@ -1,6 +1,6 @@
 package com.example.house_renting_md6.repository;
 
-import com.example.house_renting_md6.model.AppUser;
+import com.example.house_renting_md6.model.User;
 import com.example.house_renting_md6.model.House;
 import com.example.house_renting_md6.model.Order;
 import org.springframework.data.domain.Page;
@@ -22,7 +22,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query(value = "select * from orders where customer_id = :customer_id and status >= 1",nativeQuery = true)
     Iterable<Order> findOderByCustomerId(@Param("customer_id") Long customer_id);
 
-    Page<Order> findOderByCustomer(AppUser appUser, Pageable pageable);
+    Page<Order> findOderByCustomer(User user, Pageable pageable);
 
     Page<Order> findAllByHouse_Id(Pageable pageable, Long idHouse);
 

@@ -56,38 +56,38 @@ public class UserController {
 
 
     @GetMapping("/users")
-    public ResponseEntity<Iterable<AppUser>> showAllUser() {
-        Iterable<AppUser> users = userService.findAll();
+    public ResponseEntity<Iterable<User>> showAllUser() {
+        Iterable<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/admin/users")
-    public ResponseEntity<Iterable<AppUser>> showAllUserByAdmin() {
-        Iterable<AppUser> users = userService.findAll();
+    public ResponseEntity<Iterable<User>> showAllUserByAdmin() {
+        Iterable<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseBody> createUser(@Valid @RequestBody AppUser appUser, BindingResult bindingResult) {
+    public ResponseEntity<ResponseBody> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasFieldErrors()) {
             return new ResponseEntity<>(new ResponseBody("0001", "Invalid input parameter"), HttpStatus.OK);
         }
         try {
-            return new ResponseEntity<>(new ResponseBody("0000", "Sign Up Success", userService.save(appUser)), HttpStatus.CREATED);
+            return new ResponseEntity<>(new ResponseBody("0000", "Sign Up Success", userService.save(user)), HttpStatus.CREATED);
         } catch (CustomException e) {
             return new ResponseEntity<>(new ResponseBody("9999", e.getMessage()), HttpStatus.OK);
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AppUser appUser) {
+    public ResponseEntity<?> login(@RequestBody User user) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(appUser.getUsername(), appUser.getPassword()));
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtService.generateTokenLogin(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        AppUser currentAppUser = userService.findByUsername(appUser.getUsername());
-        return ResponseEntity.ok(new JwtResponse(jwt, currentAppUser.getId(), userDetails.getUsername(), currentAppUser.getAvatar(),userDetails.getAuthorities()));
+        User currentUser = userService.findByUsername(user.getUsername());
+        return ResponseEntity.ok(new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), currentUser.getAvatar(),userDetails.getAuthorities()));
     }
 
     @GetMapping("/hello")
@@ -96,35 +96,35 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<AppUser> getProfile(@PathVariable Long id) {
-        Optional<AppUser> userOptional = this.userService.findById(id);
+    public ResponseEntity<User> getProfile(@PathVariable Long id) {
+        Optional<User> userOptional = this.userService.findById(id);
         return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping("/users/update-profile/{id}")
-    public ResponseEntity<AppUser> updateUserProfile(@PathVariable Long id, @RequestBody AppUser appUser) {
-        Optional<AppUser> userOptional = this.userService.findById(id);
+    public ResponseEntity<User> updateUserProfile(@PathVariable Long id, @RequestBody User user) {
+        Optional<User> userOptional = this.userService.findById(id);
         if (!userOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        appUser.setId(userOptional.get().getId());
-        appUser.setUsername(userOptional.get().getUsername());
-        appUser.setEnabled(userOptional.get().isEnabled());
-        appUser.setRoles(userOptional.get().getRoles());
-        appUser.setPassword(userOptional.get().getPassword());
-        appUser.setConfirmPassword(userOptional.get().getConfirmPassword());
-        userServiceImpl.update(appUser);
-        return new ResponseEntity<>(appUser, HttpStatus.OK);
+        user.setId(userOptional.get().getId());
+        user.setUsername(userOptional.get().getUsername());
+        user.setEnabled(userOptional.get().isEnabled());
+        user.setRoles(userOptional.get().getRoles());
+        user.setPassword(userOptional.get().getPassword());
+        user.setConfirmPassword(userOptional.get().getConfirmPassword());
+        userServiceImpl.update(user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PutMapping("/users/update-password/{id}")
-    public ResponseEntity<AppUser> updatePassword(@PathVariable Long id, @RequestBody AppUser appUser) {
-        Optional<AppUser> userOptional = userService.findById(id);
+    public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User user) {
+        Optional<User> userOptional = userService.findById(id);
         if (!userOptional.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        userOptional.get().setPassword(passwordEncoder.encode(appUser.getPassword()));
-        userOptional.get().setConfirmPassword(passwordEncoder.encode(appUser.getConfirmPassword()));
+        userOptional.get().setPassword(passwordEncoder.encode(user.getPassword()));
+        userOptional.get().setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
         userServiceImpl.update(userOptional.get());
         return new ResponseEntity<>(HttpStatus.OK);
     }

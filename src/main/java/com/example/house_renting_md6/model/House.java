@@ -28,7 +28,7 @@ public class House {
     @Min(value = 1, message = "The lowest price is 1")
     private Long price;
     @ManyToOne
-    private AppUser owner;
+    private User owner;
     private int status;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -103,11 +103,11 @@ public class House {
         this.price = price;
     }
 
-    public AppUser getOwner() {
+    public User getOwner() {
         return owner;
     }
 
-    public void setOwner(AppUser owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
     }
 

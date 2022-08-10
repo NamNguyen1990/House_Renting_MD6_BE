@@ -34,7 +34,7 @@ public class OrderController {
     @PostMapping("/{idHome}/{idCustomer}")
     public ResponseEntity<?> orderHome(@RequestBody Order order, @PathVariable Long idHome, @PathVariable Long idCustomer, BindingResult bindingResult) {
         Optional<House> house = houseService.findById(idHome);
-        Optional<AppUser> user = userService.findById(idCustomer);
+        Optional<User> user = userService.findById(idCustomer);
         List<Order> orders = orderService.findAllByHouse(house.get());
         if (bindingResult.hasFieldErrors()) {
             return new ResponseEntity<>(new ResponseBody("0001", "Invalid input parameter!"), HttpStatus.BAD_REQUEST);
@@ -118,7 +118,7 @@ public class OrderController {
 
     @GetMapping("/find1")
     public ResponseEntity<Page<Order>> findOrderByOwnerId1(@PageableDefault(value = 9, sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,@RequestParam Long customer_id) {
-        Optional<AppUser> user = userService.findById(customer_id);
+        Optional<User> user = userService.findById(customer_id);
         Page<Order> orders =  orderService.findOderByCustomerId1(user.get(),pageable);
         if (orders.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -77,7 +77,7 @@ public class HouseController {
         return new ResponseEntity<>(houseOptional.get(), HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/find-by-ownerId")  // Tìm theo id AppUser đăng nhập để ra số house đã đăng của id đó!
+    @GetMapping("/find-by-ownerId")  // Tìm theo id User đăng nhập để ra số house đã đăng của id đó!
     public ResponseEntity<Iterable<House>> findHouseByOwnerId(@RequestParam(value = "owner_id") Long owner_id) {
         List<House> houses = (List<House>) houseService.findByOwnerId(owner_id);
         if (houses.isEmpty()) {

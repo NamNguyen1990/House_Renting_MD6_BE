@@ -33,9 +33,9 @@ public interface HouseRepository extends JpaRepository<House, Long> {
             "limit 3) as abc on abc.house_id = house.id", nativeQuery = true)
     Iterable<House> findTop5();
 
-
     @Query(value = "(select * from house h where " +
             "address like :address and (price between :startPrice and :endPrice) and bathroom >= :bathroom and bedroom >= :bedroom and h.status = 1)", nativeQuery = true)
     ArrayList<House> findByManyThing1(@Param("address") String address, @Param("startPrice") int startPrice, @Param("endPrice") int endPrice,
                                  @Param("bathroom") int bathroom, @Param("bedroom") int bedroom);
+
 }

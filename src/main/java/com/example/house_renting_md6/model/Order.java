@@ -17,7 +17,7 @@ public class Order {
     private House house;
 
     @ManyToOne
-    private AppUser customer;
+    private User customer;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startTime;
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -56,11 +56,11 @@ public class Order {
         this.house = house;
     }
 
-    public AppUser getCustomer() {
+    public User getCustomer() {
         return customer;
     }
 
-    public void setCustomer(AppUser customer) {
+    public void setCustomer(User customer) {
         this.customer = customer;
     }
 
