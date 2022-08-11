@@ -54,6 +54,9 @@ public class OrderController {
         if (order.getStartTime().compareTo(LocalDate.now())<0){
             return new ResponseEntity<>(new ResponseBody("0001", "start time must be greater than current time!"), HttpStatus.OK);
         }
+        if (!order.getEndTime().isAfter(order.getStartTime())) {
+            return new ResponseEntity<>(new ResponseBody("0001", "The start time must be less than the end time!"), HttpStatus.OK);
+        }
         if (orders.isEmpty()) {
             order.setCustomer(user.get());
             order.setHouse(house.get());
@@ -66,9 +69,6 @@ public class OrderController {
             order.setTotal(order.getHouse().getPrice() * ChronoUnit.DAYS.between(order.getStartTime(), order.getEndTime()));
             return new ResponseEntity<>(new ResponseBody("0000", "Order Success", orderService.save(order)), HttpStatus.CREATED);
         } else {
-            if (!order.getEndTime().isAfter(order.getStartTime())) {
-                return new ResponseEntity<>(new ResponseBody("0001", "The start time must be less than the end time!"), HttpStatus.OK);
-            }
             for (int i = 0; i < orders.size(); i++) {
                 if (orders.get(i).getEndTime().isAfter(order.getStartTime())) {
                     if (orders.get(i).getStartTime().isBefore(order.getStartTime())) {
